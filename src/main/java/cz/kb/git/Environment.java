@@ -11,7 +11,7 @@ public enum Environment {
 
     String k8sHost;
     String k8sNamespace;
-    int port = 3000;
+    int port = 30000;
 
     Environment(String k8sHost, String k8sNamespace) {
         this.k8sNamespace = k8sNamespace;

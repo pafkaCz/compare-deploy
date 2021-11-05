@@ -29,8 +29,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,11 +36,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static cz.kb.git.Environment.*;
 import static java.util.Arrays.asList;
 
 
@@ -52,9 +52,12 @@ public class CompareDeployments {
     public static final String VERSION_CATALOGUES_DIR = "version-catalogues";
     public static final String SERVICES_DIR = "services";
     public static final String GIT_SESSION_ID = "BITBUCKETSESSIONID";
+    public static final String SNAPSHOT_VERSION = "-SNAPSHOT";
     public static final String REPO_BRANCH = "develop";
-    public static final String CATALOGUE_VERSION_BRANCH = "1.11";
-    private static final boolean SKIP_GIT_CMDS = false;
+    public static final String CATALOGUE_VERSION_BRANCH = "1.12";
+    public static final String USERNAME = "e_pzeman";
+    public static final String PWD = "qQq!12311qwd";
+    private static final boolean SKIP_GIT_CMDS = true;
     private static HttpClientContext httpClientContext = null;
 
 
@@ -63,7 +66,7 @@ public class CompareDeployments {
         try {
             LOG.debug("Compare deployments started @" + ZonedDateTime.now());
             setSystemSslProperties();
-            List<Environment> environmentsToCompare = asList(Environment.FAT, Environment.UAT);
+            List<Environment> environmentsToCompare = asList(FAT, SIT, UAT);
 
             final List<String> bsscGitRepos = parseRepositoryNames(readRepositoriesFromGit());
             Map<String, String> latestTaggedCatalogues = getLibrariesFromLatestTagVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
@@ -72,78 +75,73 @@ public class CompareDeployments {
             List<EnvironmentDeployment> environmentsDeployments = new ArrayList<>();
             for (Environment env : environmentsToCompare) {
                 EnvironmentDeployment environmentsDeployment = new EnvironmentDeployment(env);
-                Map<String, String> k8sLibs = getLibrariesFromK8Deployment(readDeploymentsFromK8s(env.k8sHost, env.port, env.k8sNamespace));
+                environmentsDeployment.setDeployments(getLibrariesFromK8Deployment(readDeploymentsFromK8s(env.k8sHost, env.port, env.k8sNamespace)));
+                environmentsDeployments.add(environmentsDeployment);
             }
 //             Map<String, String> fat = getLibrariesFromK8Deployment(readFromFile("c:\\Users\\e_pzeman\\Projects\\Sandbox\\compare-deployments\\FAT_deployments.json"));
-            Map<String, String> fat = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vncub2296.os.kb.cz", 30000, "bssc-fat-01-app"));
+//            Map<String, String> fat = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vncub2296.os.kb.cz", 30000, "bssc-fat-01-app"));
             // Map<String, String> sit = getLibrariesFromK8Deployment(readFromFile("C:\\Users\\e_pzeman\\KB\\Projects\\BSSC\\int-simple-case\\sit.json"));
 //            Map<String, String> sit = new HashMap<>();
-            Map<String, String> sit = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vncub2242.os.kb.cz", 30000, "bssc-sit-01-app"));
-            Map<String, String> uat = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vncub2296.os.kb.cz", 30000, "bssc-uat-01-app"));
+//            Map<String, String> sit = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vncub2242.os.kb.cz", 30000, "bssc-sit-01-app"));
+//            Map<String, String> uat = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vncub2296.os.kb.cz", 30000, "bssc-uat-01-app"));
 //            Map<String, String> uat = getLibrariesFromK8Deployment(readFromFile("c:\\Users\\e_pzeman\\Projects\\Sandbox\\compare-deployments\\UAT_deployments.json"));
 //            Map<String, String> perf = getLibrariesFromK8Deployment(readDeploymentsFromK8s("10.96.45.41", 30000, "bssc-perf-01-app"));
-            Map<String, String> perf = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vncub2613.os.kb.cz", 30000, "bssc-perf-01-app"));
+//            Map<String, String> perf = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vncub2613.os.kb.cz", 30000, "bssc-perf-01-app"));
 //            Map<String, String> prod = getLibrariesFromK8Deployment(readDeploymentsFromK8s("vccub2820.os.kb.cz", 30000, "bssc-prod-01-app"));
-            Map<String, String> prod = getLibrariesFromK8Deployment(readFromFile("c:\\Users\\e_pzeman\\Projects\\Sandbox\\compare-deployments\\PROD_deployments.json"));
+//            Map<String, String> prod = getLibrariesFromK8Deployment(readFromFile("c:\\Users\\e_pzeman\\Projects\\Sandbox\\compare-deployments\\PROD_deployments.json"));
             List<String> allLibs = Stream.of(
                                     latestCatalogues.keySet().stream().collect(Collectors.toSet()),
                                     latestTaggedCatalogues.keySet().stream().collect(Collectors.toSet()),
                                     repo.keySet().stream().collect(Collectors.toSet()),
-                                    fat.keySet().stream().collect(Collectors.toSet()),
-                                    sit.keySet().stream().collect(Collectors.toSet()),
-                                    uat.keySet().stream().collect(Collectors.toSet()),
-                                    perf.keySet().stream().collect(Collectors.toSet())
+                                    environmentsDeployments.stream().flatMap(e -> e.getDeployments().stream()).map(Deployment::getServiceName).collect(Collectors.toList())
+//                                    fat.keySet().stream().collect(Collectors.toSet()),
+//                                    sit.keySet().stream().collect(Collectors.toSet()),
+//                                    uat.keySet().stream().collect(Collectors.toSet()),
+//                                    perf.keySet().stream().collect(Collectors.toSet())
                     )
-                                .flatMap(Collection::stream).collect(Collectors.toSet()).stream()
+                                .flatMap(Collection::stream)
+                                .collect(Collectors.toSet())
+                                .stream()
                                 .sorted()
                                 .collect(Collectors.toList());
-            BufferedWriter writer = new BufferedWriter(new FileWriter(String.format("report_%s.html", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"))), false));
-            writer.append("<html><head><style> table, th, td {border: 1px solid black;}</style></head>");
-            writer.append("<body><table>");
-            writer.append("<tr><th>#</th>" +
-                    "<th>Application</th>" +
-                    "<th>FAT</th>" +
-                    "<th>SIT</th>" +
-                    "<th>UAT</th>" +
-                    "<th>PERF</th>" +
-                    "<th>PROD</th>" +
-                    "<th>Catalogue " + CATALOGUE_VERSION_BRANCH + "</th>" +
-                    "<th>Catalogue Latest Tag" + CATALOGUE_VERSION_BRANCH + "</th>" +
-                    "<th>Repo " + REPO_BRANCH + "(ex. SNAPSHOTs)</th>" +
-                    "</tr>");
-            int i = 1;
-            for (String library : allLibs) {
-                String refValue = fat.get(library);
-                writer.append("<tr>\n");
-                writer.append("<td>" + i++ + "</td>");
-                writer.append("<td>" + library + "</td>");
-                writer.append(formatHtmlValue(fat.get(library), refValue));
-                writer.append(formatHtmlValue(sit.get(library), refValue));
-                writer.append(formatHtmlValue(uat.get(library), refValue));
-                writer.append(formatHtmlValue(perf.get(library), refValue));
-                writer.append(formatHtmlValue(prod.get(library), refValue));
-                writer.append(formatHtmlValue(latestCatalogues.get(library), refValue));
-                writer.append(formatHtmlValue(latestTaggedCatalogues.get(library), refValue));
-                writer.append(formatHtmlValue(repo.get(library), refValue));
-
-                writer.append("</tr>\n");
+            final HtmlBuilder html = new HtmlBuilder();
+            html.startTags("html", "head");
+            html.addTag("style", "table, th, td {border: 1px solid black;}");
+            html.endTag();
+            html.startTags("body", "table", "tr");
+            html.addTag("th", "#");
+            html.addTag("th", "Service Name");
+            for (EnvironmentDeployment environmentDeployment : environmentsDeployments) {
+                html.addTag("th", environmentDeployment.getEnvironment().name());
             }
-            writer.append("</table>Generated:" + new Date() + "</body></html>");
-            writer.close();
+            html.addTag("th", "Catalogue " + CATALOGUE_VERSION_BRANCH);
+            html.addTag("th", "Catalogue Release" + CATALOGUE_VERSION_BRANCH);
+            html.addTag("th", "Repo " + REPO_BRANCH + "(ex. SNAPSHOTs)");
+            html.endTag();
+            int i = 1;
+            for (String serviceName : allLibs) {
+                html.startTag("tr");
+                html.addTag("td",   "" + i++ );
+                html.addTag("td",serviceName);
+                String refValue = null;
+                for (final EnvironmentDeployment environmentDeployment : environmentsDeployments) {
+                    refValue = Optional.ofNullable(refValue).orElse(environmentDeployment.getDeployedServiceVersion(serviceName));
+                    html.addTag("td", html.formatValue(environmentDeployment.getDeployedServiceVersion(serviceName), refValue));
+                }
+                html.addTag("td", html.formatValue(latestCatalogues.get(serviceName), refValue));
+                html.addTag("td", html.formatValue(latestTaggedCatalogues.get(serviceName), refValue));
+                html.addTag("td", html.formatValue(repo.get(serviceName), refValue));
+                html.endTag();
+            }
+            html.endTag();
+            html.addTag("div", "Generated:" + new Date());
+            html.finish();
         } catch (Exception e) {
             LOG.error("Error while generating report", e);
         }
     }
 
-    private static String formatHtmlValue(String value, String refValue) {
-        if (value == null) {
-            return "<td><p style=\"color:red;\">-</p></td>";
-        }
-        if (!value.equals(refValue)) {
-            return "<td><p style=\"color:red;\">" + value + "</p></td>";
-        }
-        return "<td>" + value + "</td>";
-    }
+
 
     private static JSONObject readDeploymentsFromK8s(String k8sHost, int port, String namespace) throws Exception {
         String url = "https://" + k8sHost + ":" + port + "/api/v1/deployment/" + namespace + "?itemsPerPage=60&page=1&sortBy=d,name";
@@ -294,9 +292,9 @@ public class CompareDeployments {
         return bsscRepos;
     }
 
-    private static Map<String, String> getLibrariesFromK8Deployment(JSONObject json) throws JSONException {
+    private static List<Deployment> getLibrariesFromK8Deployment(JSONObject json) throws JSONException {
         if (json == null ) {
-            return new HashMap<>();
+            return new ArrayList<>();
         }
         List<String> k8Deploy = new ArrayList<>();
         final JSONArray deployments = json.getJSONArray("deployments");
@@ -307,7 +305,7 @@ public class CompareDeployments {
         }
         Collections.sort(k8Deploy);
         // k8Deploy.stream().collect(Collectors.toMap(lib -> lib.substring(0, lib.indexOf(":")), lib -> lib.substring(lib.indexOf(":")+1)));
-        return listToMap(k8Deploy);
+        return librariesToDeployment(k8Deploy);
     }
 
     private static Map<String, String> listToMap(List<String> list) {
@@ -323,7 +321,7 @@ public class CompareDeployments {
         List<Deployment> deployments = new ArrayList<>();
         for (String item : list) {
             final String[] split = item.split(":");
-            deployments.add(new Deployment(split[0], split[1]));
+            deployments.add(new Deployment(split[0], split[1].replace(SNAPSHOT_VERSION, "")));
         }
         return deployments;
     }
@@ -391,10 +389,6 @@ public class CompareDeployments {
         return listToMap(result);
     }
 
-    private Map<String, String> createMapOfVersionLibraries(final List<String> versionCatalogueLines) {
-        return null;
-    }
-
     private static Map<String, String> getVersionsFromGitRepo(String branch, List<String> bsscRepos) throws IOException {
         GitClient.fetchAllServicesFromGit(branch, bsscRepos);
         final List<String> poms = findFilesInSubDir(SERVICES_DIR, "pom.xml");
@@ -405,8 +399,8 @@ public class CompareDeployments {
             int endVersion = pomFileContent.indexOf("</version>");
             String serviceName = pom.substring((SERVICES_DIR + "\\").length(), pom.indexOf("\\pom.xml"));
             String version = pomFileContent.substring(startVersion + "<version>".length(), endVersion);
-            if (version.endsWith("-SNAPSHOT")) {
-                version = version.replace("-SNAPSHOT", "");
+            if (version.endsWith(SNAPSHOT_VERSION)) {
+                version = version.replace(SNAPSHOT_VERSION, "");
                 int minorVersion = Integer.valueOf(version.split("\\.")[1]);
                 version = version.replace(Integer.toString(minorVersion), Integer.toString(--minorVersion));
             }
