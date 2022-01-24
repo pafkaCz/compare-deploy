@@ -19,12 +19,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLHandshakeException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,10 +48,15 @@ import java.util.stream.Stream;
 
 import static cz.kb.git.Environment.*;
 import static java.util.Arrays.asList;
+import static org.apache.http.util.TextUtils.isBlank;
 
 
 @Slf4j
+@Component
 public class CompareDeployments {
+
+    @Autowired
+    private K8sClient k8sClient;
 
     public static final String VERSION_CATALOGUES_DIR = "version-catalogues";
     public static final String SERVICES_DIR = "services";
@@ -56,26 +65,26 @@ public class CompareDeployments {
     public static final String REPO_BRANCH = "develop";
     public static final String CATALOGUE_VERSION_BRANCH = "1.12";
     public static final String USERNAME = "e_pzeman";
-    public static final String PWD = "qQq!12311qwd";
+
     private static final boolean SKIP_GIT_CMDS = true;
     private static HttpClientContext httpClientContext = null;
 
 
 
-    public static void main(String[] args) {
+    public void compare() {
         try {
             LOG.debug("Compare deployments started @" + ZonedDateTime.now());
             setSystemSslProperties();
-            List<Environment> environmentsToCompare = asList(FAT, SIT, UAT);
+            List<Environment> environmentsToCompare = asList(FAT, UAT);
 
             final List<String> bsscGitRepos = parseRepositoryNames(readRepositoriesFromGit());
             Map<String, String> latestTaggedCatalogues = getLibrariesFromLatestTagVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
             Map<String, String> latestCatalogues = getLibrariesFromVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
             Map<String, String> repo = getVersionsFromGitRepo(REPO_BRANCH, bsscGitRepos);
             List<EnvironmentDeployment> environmentsDeployments = new ArrayList<>();
-            for (Environment env : environmentsToCompare) {
-                EnvironmentDeployment environmentsDeployment = new EnvironmentDeployment(env);
-                environmentsDeployment.setDeployments(getLibrariesFromK8Deployment(readDeploymentsFromK8s(env.k8sHost, env.port, env.k8sNamespace)));
+            for (Environment environment : environmentsToCompare) {
+                EnvironmentDeployment environmentsDeployment = new EnvironmentDeployment(environment);
+                environmentsDeployment.setDeployments(getLibrariesFromK8Deployment(readDeploymentsFromK8s(environment)));
                 environmentsDeployments.add(environmentsDeployment);
             }
 //             Map<String, String> fat = getLibrariesFromK8Deployment(readFromFile("c:\\Users\\e_pzeman\\Projects\\Sandbox\\compare-deployments\\FAT_deployments.json"));
@@ -143,10 +152,8 @@ public class CompareDeployments {
 
 
 
-    private static JSONObject readDeploymentsFromK8s(String k8sHost, int port, String namespace) throws Exception {
-        String url = "https://" + k8sHost + ":" + port + "/api/v1/deployment/" + namespace + "?itemsPerPage=60&page=1&sortBy=d,name";
-        checkSslConnection(k8sHost, port);
-        return requestApi(url);
+    private JSONObject readDeploymentsFromK8s(Environment environment) throws Exception {
+        return requestK8sApi(environment, "/api/v1/deployment/" + environment.k8sNamespace + "?itemsPerPage=60&page=1&sortBy=d,name");
     }
 
     private static JSONObject requestApiWithCookie(String url, HttpClientContext context) throws IOException, JSONException {
@@ -174,21 +181,9 @@ public class CompareDeployments {
         return context;
     }
 
-    private static JSONObject requestApi(String url) throws IOException, JSONException {
-        HttpUriRequest httpRequest = new HttpGet(url);
-        LOG.debug("Request GET {}", url);
-        try {
-            CloseableHttpResponse httpResponse = HttpClientBuilder.create().build().execute(httpRequest);
-            assert httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-
-            String response = EntityUtils.toString(httpResponse.getEntity());
-            LOG.trace("Response: {}", response);
-            JSONObject jsonResponse = new JSONObject(response);
-            return jsonResponse;
-        } catch (Exception e) {
-            LOG.error("Error requesting {} : {}", url, e.getMessage());
-            return null;
-        }
+    private JSONObject requestK8sApi(Environment environment, String apiPath) throws Exception {
+        checkSslConnection(environment.k8sHost, environment.k8sApiPort);
+        return k8sClient.requestK8sApi(environment, apiPath);
     }
 
     private static void checkSslConnection(String host, int port) throws Exception {
@@ -211,8 +206,29 @@ public class CompareDeployments {
         }
     }
 
+    private static String getCookie(String cookieName) {
+        if (httpClientContext == null ) {
+            httpClientContext = HttpClientContext.create();
+            httpClientContext.setAttribute(HttpClientContext.COOKIE_STORE, new BasicCookieStore());
+        }
+        CookieStore cookieStore = httpClientContext.getCookieStore();
+        String cookieValue = cookieStore.getCookies()
+                .stream()
+                .peek(c -> LOG.debug("cookie name:{}", c.getName()))
+                .filter(c -> cookieName.equals(c.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
+        return cookieValue;
+    }
+
+    private static boolean isGitLoggedIn() {
+        return !isBlank(getCookie(GIT_SESSION_ID));
+    }
+
+
     private static HttpClientContext gitLogin() {
-        if (httpClientContext != null) {
+        if (isGitLoggedIn()) {
             return httpClientContext;
         }
         String url = "https://git.kb.cz/j_atl_security_check";
@@ -225,30 +241,19 @@ public class CompareDeployments {
             String systemTrustStore = System.getProperty("javax.net.ssl.trustStore");
             LOG.info("Default trust store {}", systemTrustStore == null ? "JDK's" : systemTrustStore);
             LOG.info("Request POST {}", url);
-            // CloseableHttpResponse httpResponse = HttpClientBuilder.create().build().execute(httpLoginRequest);
-            HttpClientContext context = HttpClientContext.create();
-            context.setAttribute(HttpClientContext.COOKIE_STORE, new BasicCookieStore());
-
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                try (CloseableHttpResponse httpResponse = httpClient.execute(httpLoginRequest, context)) {
+                try (CloseableHttpResponse httpResponse = httpClient.execute(httpLoginRequest, httpClientContext)) {
                     LOG.trace(httpResponse.toString());
-                    CookieStore cookieStore = context.getCookieStore();
-                    Cookie gitLoginCookie = cookieStore.getCookies()
-                                                       .stream()
-                                                       .peek(cookie -> LOG.info("cookie name:{}", cookie.getName()))
-                                                       .filter(cookie -> GIT_SESSION_ID.equals(cookie.getName()))
-                                                       .findFirst()
-                                                       .orElseThrow(IllegalStateException::new);
-                    final String gitSession = gitLoginCookie.getValue();
-                    LOG.info("Git session cookie {} is {}", GIT_SESSION_ID, gitSession);
-                    httpClientContext = context;
-                    return context;
+                    LOG.info("Git session cookie {} is {}", GIT_SESSION_ID, getCookie(GIT_SESSION_ID));
+                    return httpClientContext;
                 }
             }
         } catch (IOException ioException) {
             throw new UncheckedIOException(ioException);
         }
     }
+
+
 
     private static JSONObject readRepositoriesFromGit() throws Exception {
         String url = "https://git.kb.cz/rest/api/latest/projects/BSSC/repos?start=0&limit=100";
