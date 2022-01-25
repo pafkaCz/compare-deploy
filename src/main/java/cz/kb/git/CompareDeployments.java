@@ -82,7 +82,7 @@ public class CompareDeployments {
         try {
             LOG.debug("Compare deployments started @" + ZonedDateTime.now());
             setSystemSslProperties();
-            List<Environment> environmentsToCompare = asList(FAT, UAT);
+            List<Environment> environmentsToCompare = asList(FAT, UAT, PERF);
 
             final List<String> bsscGitRepos = parseRepositoryNames(readRepositoriesFromGit());
             Map<String, String> latestTaggedCatalogues = getLibrariesFromLatestTagVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
@@ -122,6 +122,7 @@ public class CompareDeployments {
                                 .collect(Collectors.toList());
             final HtmlBuilder html = new HtmlBuilder();
             html.startTags("html", "head");
+            html.addTag("title", environmentsToCompare.toString());
             html.addTag("style", "table, th, td {border: 1px solid black;}");
             html.endTag();
             html.startTags("body", "table", "tr");
