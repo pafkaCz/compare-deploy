@@ -71,12 +71,6 @@ public class CompareDeployments {
     private static final boolean SKIP_GIT_CMDS = true;
     private static HttpClientContext httpClientContext = null;
 
-    protected static final List<String> REPOS_TO_IGNORE = asList("k8s-infra-apps-nprod", "jenkinsx-inventory", "api-server-data", "load-balancer-config", "configuration" +
-                    "-as-code-1611320742", "jenkins-configuration-as-code", "sc-feapi-mapping-repository", "lib-sc-bpmn-renderer", "configuration-as-code-1611320742", "SimpleCase" +
-                    "-static-balancer", "version-catalog-K8S_IDV", "feapi-idv", "cm-idv-config", "doc-public-access", "test-integration", "int-document-by-public-id", "bpm-def-event-emitter", "lib-cm-common", "mock-server",
-            "version-catalog-K8S_BSSC", "version-catalog-K8S_SCPERMISSIONSERVICE", "bpm-def-event-emitter", "idv-config", "app-simple-case", "feapi-party");
-
-
     public void compare() {
         try {
             LOG.debug("Compare deployments started @" + ZonedDateTime.now());
@@ -132,7 +126,7 @@ public class CompareDeployments {
             }
             html.addTag("th", "Catalogue " + CATALOGUE_VERSION_BRANCH);
             html.addTag("th", "Catalogue Release" + CATALOGUE_VERSION_BRANCH);
-            html.addTag("th", "Repo " + REPO_BRANCH + "(ex. SNAPSHOTs)");
+            html.addTag("th", "Repo " + REPO_BRANCH + "branch");
             html.endTag();
             int i = 1;
             for (String serviceName : allLibs) {
@@ -300,7 +294,7 @@ public class CompareDeployments {
         return bsscRepos;
     }
 
-    private static List<Deployment> getLibrariesFromK8Deployment(JSONObject json) throws JSONException {
+    private List<Deployment> getLibrariesFromK8Deployment(JSONObject json) throws JSONException {
         if (json == null ) {
             return new ArrayList<>();
         }
@@ -308,28 +302,35 @@ public class CompareDeployments {
         final JSONArray deployments = json.getJSONArray("deployments");
         for (int i = 0; i < deployments.length(); i++) {
             final JSONObject deployment = deployments.getJSONObject(i);
-            final String image = deployment.getJSONArray("containerImages").getString(0).replace("nexus3.kb.cz:18443/", "");
-            k8Deploy.add(image.substring(image.indexOf("/")+1));
+            String image = deployment.getJSONArray("containerImages").getString(0).replace("nexus3.kb.cz:18443/", "");
+            image = image.substring(image.indexOf("/")+1);
+            k8Deploy.add(image);
         }
         Collections.sort(k8Deploy);
         // k8Deploy.stream().collect(Collectors.toMap(lib -> lib.substring(0, lib.indexOf(":")), lib -> lib.substring(lib.indexOf(":")+1)));
         return librariesToDeployment(k8Deploy);
     }
 
-    private static Map<String, String> listToMap(List<String> list) {
+    private Map<String, String> listToMap(List<String> list) {
         Map<String, String> map = new HashMap<>();
         for (String item : list) {
-            final String[] split = item.split(":");
-            map.put(split[0], split[1]);
+            String[] split = item.split(":");
+            String serviceName = split[0];
+            if (!configuration.getIgnoredArtefacts().contains(serviceName)) {
+                map.put(serviceName, split[1]);
+            }
         }
         return map;
     }
 
-    private static List<Deployment> librariesToDeployment(List<String> list) {
+    private List<Deployment> librariesToDeployment(List<String> list) {
         List<Deployment> deployments = new ArrayList<>();
         for (String item : list) {
             final String[] split = item.split(":");
-            deployments.add(new Deployment(split[0], split[1].replace(SNAPSHOT_VERSION, "")));
+            String serviceName = split[0];
+            if (!configuration.getIgnoredArtefacts().contains(serviceName)) {
+                deployments.add(new Deployment(serviceName, split[1].replace(SNAPSHOT_VERSION, "")));
+            }
         }
         return deployments;
     }
@@ -345,7 +346,7 @@ public class CompareDeployments {
         final HttpClientContext httpClientContext = gitLogin();
         List<String> result = new ArrayList<>();
         for (String repoName : bsscRepos) {
-            if(repoName.startsWith(GitClient.VERSION_CATALOG_PREFIX) && !REPOS_TO_IGNORE.contains(repoName)) {
+            if(repoName.startsWith(GitClient.VERSION_CATALOG_PREFIX) && !configuration.getIgnoredArtefacts().contains(repoName)) {
                 String latestTag = findLatestTag(repoName, catalogVersionBranch, httpClientContext);
                 if (latestTag == null) {
                     continue;
@@ -412,7 +413,9 @@ public class CompareDeployments {
                 int minorVersion = Integer.valueOf(version.split("\\.")[1]);
                 version = version.replace(Integer.toString(minorVersion), Integer.toString(--minorVersion));
             }
-            result.put(serviceName, version);
+            if (!configuration.getIgnoredArtefacts().contains(serviceName)) {
+                result.put(serviceName, version);
+            }
         }
         return result;
     }
@@ -502,7 +505,7 @@ public class CompareDeployments {
         public void fetchAllServicesFromGit(String branchName, List<String> bsscRepos) {
             try {
                 for (String item : bsscRepos) {
-                    if (!item.startsWith(VERSION_CATALOG_PREFIX) && !REPOS_TO_IGNORE.contains(item)) {
+                    if (!item.startsWith(VERSION_CATALOG_PREFIX) && !configuration.getIgnoredArtefacts().contains(item)) {
                         fetchRepoFromGit(item, branchName,SERVICES_DIR);
                     }
                 }
