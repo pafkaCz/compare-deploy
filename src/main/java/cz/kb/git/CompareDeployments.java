@@ -59,8 +59,8 @@ public class CompareDeployments {
     @Autowired
     private K8sClient k8sClient;
 
-    @Value("${cz.kb.pwd}")
-    private String pwd;
+    @Autowired
+    private CompareConfiguration configuration;
 
     public static final String VERSION_CATALOGUES_DIR = "version-catalogues";
     public static final String SERVICES_DIR = "services";
@@ -68,7 +68,6 @@ public class CompareDeployments {
     public static final String SNAPSHOT_VERSION = "-SNAPSHOT";
     public static final String REPO_BRANCH = "develop";
     public static final String CATALOGUE_VERSION_BRANCH = "1.12";
-    public static final String USERNAME = "e_pzeman";
     private static final boolean SKIP_GIT_CMDS = true;
     private static HttpClientContext httpClientContext = null;
 
@@ -240,8 +239,8 @@ public class CompareDeployments {
         String url = "https://git.kb.cz/j_atl_security_check";
         HttpPost httpLoginRequest = new HttpPost(url);
         List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("j_username", USERNAME));
-        params.add(new BasicNameValuePair("j_password", pwd));
+        params.add(new BasicNameValuePair("j_username", configuration.getUsername()));
+        params.add(new BasicNameValuePair("j_password", configuration.getPwd()));
         try {
             httpLoginRequest.setEntity(new UrlEncodedFormEntity(params));
             LOG.info("Request POST {}", url);

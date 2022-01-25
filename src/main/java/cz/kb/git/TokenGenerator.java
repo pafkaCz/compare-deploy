@@ -2,14 +2,11 @@ package cz.kb.git;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
-
-import static cz.kb.git.CompareDeployments.USERNAME;
 
 @Slf4j
 @Component
@@ -22,19 +19,24 @@ public class TokenGenerator {
     @Autowired
     private HttpClient httpClient;
 
-    @Value("${cz.kb.pwd}")
-    private String pwd;
+    @Autowired
+    private CompareConfiguration configuration;
 
     public String generateApiToken(Environment environment) throws IOException {
         if (!isMwsLoggedIn()) {
             mwsPortalLogin();
         }
-        final String response = httpClient.postRequest(MWS_GENERATE_TOKEN_URL, null, Map.of("tokenUsername", USERNAME, "tokenPassword", pwd, "clusterNamingId", environment.clusterNamingId));
+        final String response = httpClient.postRequest(MWS_GENERATE_TOKEN_URL, null,
+                Map.of("tokenUsername", configuration.getUsername(),
+                       "tokenPassword", configuration.getPwd(),
+                       "clusterNamingId", environment.clusterNamingId));
         return response;
     }
 
     private void mwsPortalLogin() throws IOException {
-       httpClient.postRequest(MWS_LOGIN_URL, null, Map.of("username", USERNAME, "password", pwd));
+       httpClient.postRequest(MWS_LOGIN_URL, null,
+               Map.of("username", configuration.getUsername(),
+                      "password", configuration.getPwd()));
        LOG.info("MWS session cookie {} is {}", MWS_LOGIN_COOKIE_NAME, httpClient.getCookie(MWS_LOGIN_COOKIE_NAME));
     }
 
