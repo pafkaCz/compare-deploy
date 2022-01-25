@@ -25,7 +25,12 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +42,7 @@ import static org.apache.http.util.TextUtils.isBlank;
 @Component
 public class HttpClient {
 
+    private static final String COOKIE_STORE_FILE = "cookieStore.ser";
     private static HttpClientContext httpClientContext = null;
 
     @PostConstruct
@@ -44,9 +50,38 @@ public class HttpClient {
         if (httpClientContext == null ) {
             httpClientContext = HttpClientContext.create();
             httpClientContext.setAttribute(HttpClientContext.COOKIE_STORE, new BasicCookieStore());
+            LOG.info("New http client context has been initialized.");
         }
         String systemTrustStore = System.getProperty("javax.net.ssl.trustStore");
         LOG.info("Default trust store {}", systemTrustStore == null ? "JDK's" : systemTrustStore);
+        try {
+            FileInputStream fileInputStream = new FileInputStream(COOKIE_STORE_FILE);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            CookieStore cookieStore = (CookieStore) objectInputStream.readObject();
+            objectInputStream.close();
+            httpClientContext.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
+            LOG.info("Cookie store has been restored from {}", COOKIE_STORE_FILE);
+        } catch (IOException | ClassNotFoundException ioException) {
+            LOG.error("Restoring cookie store from failed.", ioException);
+        }
+    }
+
+    @PreDestroy
+    public void saveCookieStore() {
+        if (httpClientContext == null || httpClientContext.getCookieStore() == null) {
+            LOG.info("No cookie store to save.");
+            return;
+        }
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(COOKIE_STORE_FILE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(httpClientContext.getCookieStore());
+            objectOutputStream.flush();
+            objectOutputStream.close();
+            LOG.info("Cookie store has been saved in {}", COOKIE_STORE_FILE);
+        } catch (IOException ioException) {
+            LOG.error("Saving cookie store failed.", ioException);
+        }
     }
 
     public  String getCookie(String cookieName) {
@@ -81,7 +116,7 @@ public class HttpClient {
         if (header != null) {
             headers.putAll(header);
         }
-        headers.put("Accept", "application/json");
+//        headers.put("Accept", "application/json");
         JSONObject jsonResponse = new JSONObject(getRequest(url, headers));
         return jsonResponse;
     }
@@ -126,7 +161,7 @@ public class HttpClient {
             postRequest.setEntity(new StringEntity(postBody));
         }
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
+        headers.put("Content-Type", "application/json"); // otherwise, 415. Unsupported Media Type
         headers.putAll(header);
         return post(postRequest, headers);
     }
