@@ -42,7 +42,7 @@ public class K8sClient {
     private HttpClient httpClient;
 
     public JSONObject requestK8sApi(Environment environment, String apiPath) throws Exception {
-        String k8sLoginCookie = getK8sLoginCookie();
+        String k8sLoginCookie = getK8sLoginCookie(environment);
 
         if (StringUtils.isEmpty(k8sLoginCookie)) {
             k8sLoginCookie = k8sLogin(environment);
@@ -68,12 +68,12 @@ public class K8sClient {
 
         String jweToken = httpClient.postJsonRequest(loginUrl, Map.of(K8S_LOGIN_CSRF_HEADER_NAME, csrfToken), body).getString(K8S_LOGIN_COOKIE_NAME);
         httpClient.setCookie(K8S_LOGIN_COOKIE_NAME, URLEncoder.encode(jweToken, StandardCharsets.UTF_8.toString()), environment.k8sHost);
-        LOG.trace("K8s session cookie {} is {}", K8S_LOGIN_COOKIE_NAME, httpClient.getCookie(K8S_LOGIN_COOKIE_NAME));
+        LOG.trace("K8s session cookie {} is {}", K8S_LOGIN_COOKIE_NAME, httpClient.getCookie(K8S_LOGIN_COOKIE_NAME, environment.k8sHost));
         return jweToken;
     }
 
-    private String getK8sLoginCookie() {
-        return httpClient.getCookie(K8S_LOGIN_COOKIE_NAME);
+    private String getK8sLoginCookie(Environment environment) {
+        return httpClient.getCookie(K8S_LOGIN_COOKIE_NAME, environment.k8sHost);
     }
 
 

@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.http.util.TextUtils.isBlank;
+
 @Slf4j
 @Component
 public class HttpClient {
@@ -48,11 +50,16 @@ public class HttpClient {
     }
 
     public  String getCookie(String cookieName) {
+        return getCookie(cookieName, null);
+    }
+
+    public  String getCookie(String cookieName, String domain) {
         CookieStore cookieStore = httpClientContext.getCookieStore();
         String cookieValue = cookieStore.getCookies()
                 .stream()
                 .peek(c -> LOG.debug("cookie name:{}", c.getName()))
-                .filter(c -> cookieName.equals(c.getName()))
+                .filter(c -> cookieName.equals(c.getName()) &&
+                            (isBlank(domain) || domain.equals(c.getDomain())))
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElse(null);
