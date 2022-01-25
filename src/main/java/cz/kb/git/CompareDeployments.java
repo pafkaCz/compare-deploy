@@ -20,6 +20,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -58,6 +59,9 @@ public class CompareDeployments {
     @Autowired
     private K8sClient k8sClient;
 
+    @Value("${cz.kb.pwd}")
+    private String pwd;
+
     public static final String VERSION_CATALOGUES_DIR = "version-catalogues";
     public static final String SERVICES_DIR = "services";
     public static final String GIT_SESSION_ID = "BITBUCKETSESSIONID";
@@ -65,10 +69,13 @@ public class CompareDeployments {
     public static final String REPO_BRANCH = "develop";
     public static final String CATALOGUE_VERSION_BRANCH = "1.12";
     public static final String USERNAME = "e_pzeman";
-
     private static final boolean SKIP_GIT_CMDS = true;
     private static HttpClientContext httpClientContext = null;
 
+    protected static final List<String> REPOS_TO_IGNORE = asList("k8s-infra-apps-nprod", "jenkinsx-inventory", "api-server-data", "load-balancer-config", "configuration" +
+                    "-as-code-1611320742", "jenkins-configuration-as-code", "sc-feapi-mapping-repository", "lib-sc-bpmn-renderer", "configuration-as-code-1611320742", "SimpleCase" +
+                    "-static-balancer", "version-catalog-K8S_IDV", "feapi-idv", "cm-idv-config", "doc-public-access", "test-integration", "int-document-by-public-id", "bpm-def-event-emitter", "lib-cm-common", "mock-server",
+            "version-catalog-K8S_BSSC", "version-catalog-K8S_SCPERMISSIONSERVICE", "bpm-def-event-emitter", "idv-config", "app-simple-case", "feapi-party");
 
 
     public void compare() {
@@ -190,8 +197,6 @@ public class CompareDeployments {
         LOG.debug("Checking connection {}:{}", host, port);
         HttpUriRequest httpRequest = new HttpGet("https://" + host + ":" + port);
         httpRequest.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0");
-        String systemTrustStore = System.getProperty("javax.net.ssl.trustStore");
-        LOG.debug("Default trust store {}", systemTrustStore == null ? "JDK's" : systemTrustStore);
         try {
             CloseableHttpResponse httpResponse = HttpClientBuilder.create().build().execute(httpRequest);
             assert httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
@@ -227,7 +232,7 @@ public class CompareDeployments {
     }
 
 
-    private static HttpClientContext gitLogin() {
+    private HttpClientContext gitLogin() {
         if (isGitLoggedIn()) {
             return httpClientContext;
         }
@@ -235,11 +240,9 @@ public class CompareDeployments {
         HttpPost httpLoginRequest = new HttpPost(url);
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("j_username", USERNAME));
-        params.add(new BasicNameValuePair("j_password", PWD));
+        params.add(new BasicNameValuePair("j_password", pwd));
         try {
             httpLoginRequest.setEntity(new UrlEncodedFormEntity(params));
-            String systemTrustStore = System.getProperty("javax.net.ssl.trustStore");
-            LOG.info("Default trust store {}", systemTrustStore == null ? "JDK's" : systemTrustStore);
             LOG.info("Request POST {}", url);
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
                 try (CloseableHttpResponse httpResponse = httpClient.execute(httpLoginRequest, httpClientContext)) {
@@ -255,13 +258,13 @@ public class CompareDeployments {
 
 
 
-    private static JSONObject readRepositoriesFromGit() throws Exception {
+    private JSONObject readRepositoriesFromGit() throws Exception {
         String url = "https://git.kb.cz/rest/api/latest/projects/BSSC/repos?start=0&limit=100";
         checkSslConnection("git.kb.cz", 443);
         return requestApiWithCookie(url, gitLogin());
     }
 
-    private static List<String> readFileLinesFromGit(String repoName, String fileName, String tagName) throws Exception {
+    private List<String> readFileLinesFromGit(String repoName, String fileName, String tagName) throws Exception {
         String url = "https://git.kb.cz/rest/api/latest/projects/BSSC/repos/" +  repoName + "/browse/" + fileName + "?at=refs%2Ftags%2F" + tagName + "&start=0&limit=20000";
         checkSslConnection("git.kb.cz", 443);
         final JSONObject file = requestApiWithCookie(url, gitLogin());
@@ -337,12 +340,12 @@ public class CompareDeployments {
         return json;
     }
 
-    private static Map<String, String> getLibrariesFromLatestTagVersionCatalogue(String catalogVersionBranch, List<String> bsscRepos) throws Exception {
+    private Map<String, String> getLibrariesFromLatestTagVersionCatalogue(String catalogVersionBranch, List<String> bsscRepos) throws Exception {
         final Map<String, String> tagMap = new HashMap<>();
         final HttpClientContext httpClientContext = gitLogin();
         List<String> result = new ArrayList<>();
         for (String repoName : bsscRepos) {
-            if(repoName.startsWith(GitClient.VERSION_CATALOG_PREFIX) && !GitClient.REPOS_TO_IGNORE.contains(repoName)) {
+            if(repoName.startsWith(GitClient.VERSION_CATALOG_PREFIX) && !REPOS_TO_IGNORE.contains(repoName)) {
                 String latestTag = findLatestTag(repoName, catalogVersionBranch, httpClientContext);
                 if (latestTag == null) {
                     continue;
@@ -382,8 +385,8 @@ public class CompareDeployments {
         }
     }
 
-    private static Map<String, String> getLibrariesFromVersionCatalogue(String catalogVersion, List<String> bsscRepos) throws IOException {
-        GitClient.fetchAllVersionCataloguesFromGit(catalogVersion, bsscRepos);
+    private Map<String, String> getLibrariesFromVersionCatalogue(String catalogVersion, List<String> bsscRepos) throws IOException {
+        new GitClient().fetchAllVersionCataloguesFromGit(catalogVersion, bsscRepos);
         final List<String> catalogues = findFilesInSubDir(VERSION_CATALOGUES_DIR, "deployment.descriptor");
         List<String> result = new ArrayList<>();
         for (String catalogue : catalogues) {
@@ -394,8 +397,8 @@ public class CompareDeployments {
         return listToMap(result);
     }
 
-    private static Map<String, String> getVersionsFromGitRepo(String branch, List<String> bsscRepos) throws IOException {
-        GitClient.fetchAllServicesFromGit(branch, bsscRepos);
+    private  Map<String, String> getVersionsFromGitRepo(String branch, List<String> bsscRepos) throws IOException {
+        new GitClient().fetchAllServicesFromGit(branch, bsscRepos);
         final List<String> poms = findFilesInSubDir(SERVICES_DIR, "pom.xml");
         Map<String, String> result = new TreeMap<>();
         for (String pom : poms) {
@@ -471,14 +474,10 @@ public class CompareDeployments {
         }
     }
 
-    static class GitClient{
+    class GitClient{
         public static final String VERSION_CATALOG_PREFIX = "version-catalog-K8S_";
-        public static final List<String> REPOS_TO_IGNORE = asList("k8s-infra-apps-nprod", "jenkinsx-inventory", "api-server-data", "load-balancer-config", "configuration" +
-                "-as-code-1611320742", "jenkins-configuration-as-code", "sc-feapi-mapping-repository", "lib-sc-bpmn-renderer", "configuration-as-code-1611320742", "SimpleCase" +
-                "-static-balancer", "version-catalog-K8S_IDV", "feapi-idv", "cm-idv-config", "doc-public-access", "test-integration", "int-document-by-public-id", "bpm-def-event-emitter", "lib-cm-common", "mock-server",
-                "version-catalog-K8S_BSSC", "version-catalog-K8S_SCPERMISSIONSERVICE", "bpm-def-event-emitter", "idv-config", "app-simple-case", "feapi-party");
 
-        public static void main(String[] args) {
+        public void main(String[] args) {
             try {
                 final List<String> bsscRepos = parseRepositoryNames(readRepositoriesFromGit());
                 // final List<String> bsscRepos = Arrays.asList("be-task");
@@ -489,7 +488,7 @@ public class CompareDeployments {
             }
         }
 
-        public static void fetchAllVersionCataloguesFromGit(String catalogueVersion, List<String> bsscRepos) {
+        public void fetchAllVersionCataloguesFromGit(String catalogueVersion, List<String> bsscRepos) {
             bsscRepos.stream().filter(r -> r.startsWith(VERSION_CATALOG_PREFIX))
              .forEach(catalogueName -> {
                  try {
@@ -500,7 +499,7 @@ public class CompareDeployments {
              });
         }
 
-        public static void fetchAllServicesFromGit(String branchName, List<String> bsscRepos) {
+        public void fetchAllServicesFromGit(String branchName, List<String> bsscRepos) {
             try {
                 for (String item : bsscRepos) {
                     if (!item.startsWith(VERSION_CATALOG_PREFIX) && !REPOS_TO_IGNORE.contains(item)) {
@@ -512,7 +511,7 @@ public class CompareDeployments {
             }
         }
 
-       public static void fetchRepoFromGit(String repoName, String branch, String rootDir) throws IOException {
+       public void fetchRepoFromGit(String repoName, String branch, String rootDir) throws IOException {
             Path path = Paths.get(rootDir);
             Files.createDirectories(path);
             File serviceRepoDir = new File(rootDir, repoName);
@@ -523,7 +522,7 @@ public class CompareDeployments {
             }
         }
 
-        public static void checkoutRepository(String parentDir, String repoName, String branch) {
+        public void checkoutRepository(String parentDir, String repoName, String branch) {
             LOG.info("Checking out repository [{}] version [{}]", repoName, branch);
             String checkoutCommand = "git --git-dir=" + parentDir + "/" + repoName + "/.git --work-tree=" + parentDir + "/" + repoName + " checkout --force -B " + branch + " origin/" + branch;
             String pullCommand = "git --git-dir=" + parentDir + "/" + repoName + "/.git pull";
@@ -537,7 +536,7 @@ public class CompareDeployments {
             }
         }
 
-        public static void cloneBsscRepository(String parentDir, String repoName) {
+        public void cloneBsscRepository(String parentDir, String repoName) {
             LOG.info("Cloning version catalogue [{}] repository ", repoName);
             String cloneCommand = "git clone \"ssh://git@git.kb.cz:7999/bssc/" + repoName + ".git\" " + parentDir + "/" + repoName;
             try {
@@ -547,7 +546,7 @@ public class CompareDeployments {
             }
         }
 
-        private static void runGitCommand(String command) throws InterruptedException, IOException {
+        private void runGitCommand(String command) throws InterruptedException, IOException {
             if (SKIP_GIT_CMDS) {
                 return;
             }
@@ -571,7 +570,7 @@ public class CompareDeployments {
             }
         }
 
-        private static void waitForProcess(Process process) throws InterruptedException {
+        private void waitForProcess(Process process) throws InterruptedException {
             // process.waitFor(); // does not work
             Thread.sleep(1000); // just wait for a while to finish
         }

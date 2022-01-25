@@ -9,6 +9,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
@@ -42,6 +43,8 @@ public class HttpClient {
             httpClientContext = HttpClientContext.create();
             httpClientContext.setAttribute(HttpClientContext.COOKIE_STORE, new BasicCookieStore());
         }
+        String systemTrustStore = System.getProperty("javax.net.ssl.trustStore");
+        LOG.info("Default trust store {}", systemTrustStore == null ? "JDK's" : systemTrustStore);
     }
 
     public  String getCookie(String cookieName) {
@@ -79,17 +82,11 @@ public class HttpClient {
     public String getRequest(String url, Map<String, String> header) throws IOException {
         LOG.debug("Request GET {}", url);
         final HttpGet getRequest = new HttpGet(url);
-        if (header != null) {
-            List<Header> headers = new ArrayList<>();
-            for (final Map.Entry<String, String> entry : header.entrySet()) {
-                headers.add(new BasicHeader(entry.getKey(), entry.getValue()));
-            }
-            getRequest.setHeaders(headers.toArray(new Header[headers.size()]));
-        }
+        setHeaders(getRequest, header);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             try (CloseableHttpResponse httpResponse = httpClient.execute(getRequest, httpClientContext)) {
-                assert httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+                checkStatusCode(httpResponse);
                 String response = EntityUtils.toString(httpResponse.getEntity());
                 LOG.trace("Response: {}", response);
                 return response;
@@ -128,23 +125,34 @@ public class HttpClient {
     }
 
     private String post(HttpPost postRequest, Map<String, String> header) throws IOException {
-        if (header != null) {
-            List<Header> headers = new ArrayList<>();
-            for (final Map.Entry<String, String> entry : header.entrySet()) {
-                headers.add(new BasicHeader(entry.getKey(), entry.getValue()));
-            }
-            postRequest.setHeaders(headers.toArray(new Header[headers.size()]));
-        }
-
-        String systemTrustStore = System.getProperty("javax.net.ssl.trustStore");
-        LOG.info("Default trust store {}", systemTrustStore == null ? "JDK's" : systemTrustStore);
+        setHeaders(postRequest, header);
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             try (CloseableHttpResponse httpResponse = httpClient.execute(postRequest, httpClientContext)) {
                 LOG.trace(httpResponse.toString());
-                assert httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+                checkStatusCode(httpResponse);
                 return EntityUtils.toString(httpResponse.getEntity());
             }
         }
     }
 
+    private void checkStatusCode(final CloseableHttpResponse httpResponse) {
+        String errMsg = "Status code: " + httpResponse.getStatusLine().getStatusCode() + ". " + httpResponse.getStatusLine().getReasonPhrase();
+        switch (httpResponse.getStatusLine().getStatusCode()) {
+            case HttpStatus.SC_OK :
+                return;
+            case HttpStatus.SC_MOVED_TEMPORARILY: LOG.debug(errMsg + httpResponse.getFirstHeader("Location"));
+                return;
+        }
+        throw new RuntimeException(errMsg);
+    }
+
+    private void setHeaders(final HttpRequestBase httpRequest, final Map<String, String> header) {
+        if (header != null) {
+            List<Header> headers = new ArrayList<>();
+            for (final Map.Entry<String, String> entry : header.entrySet()) {
+                headers.add(new BasicHeader(entry.getKey(), entry.getValue()));
+            }
+            httpRequest.setHeaders(headers.toArray(new Header[headers.size()]));
+        }
+    }
 }
