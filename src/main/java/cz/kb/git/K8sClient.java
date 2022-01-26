@@ -1,6 +1,7 @@
 package cz.kb.git;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -42,13 +43,16 @@ public class K8sClient {
         String k8sUrlApi = "https://" + environment.k8sHost + ":" + environment.k8sApiPort + apiPath;
         try {
             return httpClient.getJsonRequest(k8sUrlApi, Map.of(K8S_LOGIN_COOKIE_NAME, k8sLoginCookie));
+        } catch (AuthenticationException authenticationException) {
+            k8sLogin(environment);
+            return requestK8sApi(environment, apiPath);
         } catch (Exception e) {
             LOG.error("Error requesting {} : {}", k8sUrlApi, e.getMessage());
             return null;
         }
     }
 
-    private String k8sLogin(Environment environment) throws IOException, JSONException {
+    private String k8sLogin(Environment environment) throws IOException, JSONException, AuthenticationException {
         String csrfUrl = "https://" + environment.k8sHost + ":" + environment.k8sApiPort + K8S_CSRF_PATH;
         String csrfToken = httpClient.getJsonRequest(csrfUrl, null).getString(K8S_LOGIN_CSRF_TOKEN_NAME);
 

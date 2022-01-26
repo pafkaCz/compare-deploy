@@ -1,6 +1,7 @@
 package cz.kb.git;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -22,18 +23,23 @@ public class TokenGenerator {
     @Autowired
     private CompareConfiguration configuration;
 
-    public String generateApiToken(Environment environment) throws IOException {
+    public String generateApiToken(Environment environment) throws IOException, AuthenticationException {
         if (!isMwsLoggedIn()) {
             mwsPortalLogin();
         }
-        final String response = httpClient.postRequest(MWS_GENERATE_TOKEN_URL, null,
-                Map.of("tokenUsername", configuration.getUsername(),
-                       "tokenPassword", configuration.getPwd(),
-                       "clusterNamingId", environment.clusterNamingId));
-        return response;
+        try {
+            String response = httpClient.postRequest(MWS_GENERATE_TOKEN_URL, null,
+                    Map.of("tokenUsername", configuration.getUsername(),
+                            "tokenPassword", configuration.getPwd(),
+                            "clusterNamingId", environment.clusterNamingId));
+            return response;
+        } catch (AuthenticationException authenticationException) {
+            mwsPortalLogin();
+            return generateApiToken(environment);
+        }
     }
 
-    private void mwsPortalLogin() throws IOException {
+    private void mwsPortalLogin() throws IOException, AuthenticationException {
        httpClient.postRequest(MWS_LOGIN_URL, null,
                Map.of("username", configuration.getUsername(),
                       "password", configuration.getPwd()));

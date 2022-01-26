@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -111,7 +112,7 @@ public class HttpClient {
     }
 
 
-    public JSONObject getJsonRequest(String url, Map<String, String> header) throws IOException, JSONException {
+    public JSONObject getJsonRequest(String url, Map<String, String> header) throws IOException, JSONException, AuthenticationException {
         Map<String, String> headers = new HashMap<>();
         if (header != null) {
             headers.putAll(header);
@@ -121,7 +122,7 @@ public class HttpClient {
         return jsonResponse;
     }
 
-    public String getRequest(String url, Map<String, String> header) throws IOException {
+    public String getRequest(String url, Map<String, String> header) throws IOException, AuthenticationException {
         LOG.debug("Request GET {}", url);
         final HttpGet getRequest = new HttpGet(url);
         setHeaders(getRequest, header);
@@ -136,7 +137,7 @@ public class HttpClient {
         }
     }
 
-    public String postRequest(String url, Map<String, String> header, Map<String, String> postParameters) throws IOException {
+    public String postRequest(String url, Map<String, String> header, Map<String, String> postParameters) throws IOException, AuthenticationException {
         LOG.info("Request POST {}", url);
         HttpPost postRequest = new HttpPost(url);
         if (postParameters != null) {
@@ -149,12 +150,12 @@ public class HttpClient {
         return post(postRequest, header);
     }
 
-    public JSONObject postJsonRequest(String url, Map<String, String> header, String postBody) throws IOException, JSONException {
+    public JSONObject postJsonRequest(String url, Map<String, String> header, String postBody) throws IOException, JSONException, AuthenticationException {
         JSONObject jsonResponse = new JSONObject(postRequest(url, header, postBody));
         return jsonResponse;
     }
 
-    public String postRequest(String url, Map<String, String> header, String postBody) throws IOException {
+    public String postRequest(String url, Map<String, String> header, String postBody) throws IOException, AuthenticationException {
         LOG.info("Request POST {}", url);
         HttpPost postRequest = new HttpPost(url);
         if (postBody != null) {
@@ -166,7 +167,7 @@ public class HttpClient {
         return post(postRequest, headers);
     }
 
-    private String post(HttpPost postRequest, Map<String, String> header) throws IOException {
+    private String post(HttpPost postRequest, Map<String, String> header) throws IOException, AuthenticationException {
         setHeaders(postRequest, header);
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             try (CloseableHttpResponse httpResponse = httpClient.execute(postRequest, httpClientContext)) {
@@ -177,13 +178,20 @@ public class HttpClient {
         }
     }
 
-    private void checkStatusCode(final CloseableHttpResponse httpResponse) {
+    private void checkStatusCode(final CloseableHttpResponse httpResponse) throws AuthenticationException {
         String errMsg = "Status code: " + httpResponse.getStatusLine().getStatusCode() + ". " + httpResponse.getStatusLine().getReasonPhrase();
         switch (httpResponse.getStatusLine().getStatusCode()) {
             case HttpStatus.SC_OK :
                 return;
-            case HttpStatus.SC_MOVED_TEMPORARILY: LOG.debug(errMsg + httpResponse.getFirstHeader("Location"));
+            case HttpStatus.SC_MOVED_TEMPORARILY:
+                LOG.debug(errMsg + httpResponse.getFirstHeader("Location"));
+                if (httpResponse.getFirstHeader("Location").getValue().contains("login")) {
+                    throw new AuthenticationException(errMsg);
+                }
                 return;
+            case HttpStatus.SC_UNAUTHORIZED:
+                LOG.warn(errMsg);
+                throw new AuthenticationException(errMsg);
         }
         throw new RuntimeException(errMsg);
     }

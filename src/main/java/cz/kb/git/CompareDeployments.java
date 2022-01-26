@@ -20,7 +20,6 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -126,7 +125,7 @@ public class CompareDeployments {
             }
             html.addTag("th", "Catalogue " + CATALOGUE_VERSION_BRANCH);
             html.addTag("th", "Catalogue Release" + CATALOGUE_VERSION_BRANCH);
-            html.addTag("th", "Repo " + REPO_BRANCH + "branch");
+            html.addTag("th", "Repo " + REPO_BRANCH + " branch");
             html.endTag();
             int i = 1;
             for (String serviceName : allLibs) {
@@ -506,7 +505,7 @@ public class CompareDeployments {
             try {
                 for (String item : bsscRepos) {
                     if (!item.startsWith(VERSION_CATALOG_PREFIX) && !configuration.getIgnoredArtefacts().contains(item)) {
-                        fetchRepoFromGit(item, branchName,SERVICES_DIR);
+                        fetchRepoFromGit(item, branchName, SERVICES_DIR);
                     }
                 }
             } catch (Exception e) {
