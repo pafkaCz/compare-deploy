@@ -42,13 +42,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static cz.kb.git.Environment.*;
 import static java.util.Arrays.asList;
 import static org.apache.http.util.TextUtils.isBlank;
+import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 
 @Slf4j
@@ -74,7 +74,7 @@ public class CompareDeployments {
         try {
             LOG.debug("Compare deployments started @" + ZonedDateTime.now());
             setSystemSslProperties();
-            List<Environment> environmentsToCompare = asList(FAT, UAT, PERF);
+            List<Environment> environmentsToCompare = asList(FAT, UAT);
 
             final List<String> bsscGitRepos = parseRepositoryNames(readRepositoriesFromGit());
             Map<String, String> latestTaggedCatalogues = getLibrariesFromLatestTagVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
@@ -390,7 +390,7 @@ public class CompareDeployments {
         final List<String> catalogues = findFilesInSubDir(VERSION_CATALOGUES_DIR, "deployment.descriptor");
         List<String> result = new ArrayList<>();
         for (String catalogue : catalogues) {
-            final List<String> versionCatalogueLines = Files.readAllLines(Paths.get(catalogue));
+            final List<String> versionCatalogueLines = Files.readAllLines(Paths.get(catalogue)).stream().filter(line -> isNotBlank(line)).collect(Collectors.toList());
             versionCatalogueLines.stream().map(line -> line.substring(line.indexOf(":")+1).replace(" ", "")).collect(Collectors.toCollection(() -> result));
         }
         Collections.sort(result);
@@ -434,46 +434,6 @@ public class CompareDeployments {
     private static void setSystemSslProperties() {
         System.setProperty("javax.net.ssl.trustStore", InstallCert.LOCAL_CA_CERT_STORE);
         System.setProperty("javax.net.ssl.trustStorePassword", InstallCert.STORAGE_PSSWD);
-    }
-
-    static class RetryCommand {
-
-        private final int maxRetries;
-
-        RetryCommand() {
-            this(1);
-        }
-        RetryCommand(int maxRetries) {
-            this.maxRetries = maxRetries;
-        }
-
-        // Takes a function and executes it, if fails, passes the function to the retry command
-        public <T> T runWithRetry(Supplier<T> function) {
-            try {
-                return function.get();
-            } catch (Exception e) {
-                LOG.warn("FAILED - Command failed, will be retried " + maxRetries + " times.");
-                return retry(function);
-            }
-        }
-
-        private <T> T retry(Supplier<T> function) throws RuntimeException {
-
-            int retryCounter = 0;
-            while (retryCounter < maxRetries) {
-                try {
-                    return function.get();
-                } catch (Exception ex) {
-                    retryCounter++;
-                    LOG.warn("FAILED - Command failed on retry " + retryCounter + " of " + maxRetries, ex);
-                    if (retryCounter >= maxRetries) {
-                        LOG.error("Max retries exceeded.");
-                        throw ex;
-                    }
-                }
-            }
-            return null;
-        }
     }
 
     class GitClient{
