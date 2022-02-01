@@ -41,7 +41,7 @@ public class K8sClient {
             k8sLoginCookie = URLDecoder.decode(k8sLoginCookie, StandardCharsets.UTF_8.toString());
         }
 
-        String k8sUrlApi = "https://" + environment.k8sHost + ":" + environment.k8sApiPort + apiPath;
+        Url k8sUrlApi = Url.builder().ssl(true).host(environment.k8sHost).port(environment.k8sApiPort).path(apiPath).build();
         try {
             return httpClient.getJsonRequest(k8sUrlApi, Map.of(K8S_LOGIN_COOKIE_NAME, k8sLoginCookie));
         } catch (AuthenticationException authenticationException) {
@@ -53,11 +53,11 @@ public class K8sClient {
         }
     }
 
-    private String k8sLogin(Environment environment) throws IOException, JSONException, AuthenticationException {
-        String csrfUrl = "https://" + environment.k8sHost + ":" + environment.k8sApiPort + K8S_CSRF_PATH;
+    private String k8sLogin(Environment environment) throws Exception {
+        Url csrfUrl = Url.builder().ssl(true).host(environment.k8sHost).port(environment.k8sApiPort).path(K8S_CSRF_PATH).build();
         String csrfToken = httpClient.getJsonRequest(csrfUrl, null).getString(K8S_LOGIN_CSRF_TOKEN_NAME);
 
-        String loginUrl = "https://" + environment.k8sHost + ":" + environment.k8sApiPort + K8S_LOGIN_PATH;
+        Url loginUrl = Url.builder().ssl(true).host(environment.k8sHost).port(environment.k8sApiPort).path(K8S_LOGIN_PATH).build();
         String body = "{\"" + K8S_LOGIN_CSRF_TOKEN_NAME + "\":\"" + tokenGenerator.generateApiToken(environment) + "\"}";
 
         String jweToken = httpClient.postJsonRequest(loginUrl, Map.of(K8S_LOGIN_CSRF_HEADER_NAME, csrfToken), body).getString(K8S_LOGIN_COOKIE_NAME);

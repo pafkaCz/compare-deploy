@@ -56,6 +56,9 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 public class CompareDeployments {
 
     @Autowired
+    private BitBucketClient bitBucketClient;
+
+    @Autowired
     private K8sClient k8sClient;
 
     @Autowired
@@ -63,21 +66,19 @@ public class CompareDeployments {
 
     public static final String VERSION_CATALOGUES_DIR = "version-catalogues";
     public static final String SERVICES_DIR = "services";
-    public static final String GIT_SESSION_ID = "BITBUCKETSESSIONID";
+
     public static final String SNAPSHOT_VERSION = "-SNAPSHOT";
     public static final String REPO_BRANCH = "develop";
     public static final String CATALOGUE_VERSION_BRANCH = "1.12";
     private static final boolean SKIP_GIT_CMDS = true;
-    private static HttpClientContext httpClientContext = null;
 
     public void compare() {
         try {
             LOG.debug("Compare deployments started @" + ZonedDateTime.now());
-            setSystemSslProperties();
             List<Environment> environmentsToCompare = asList(FAT, UAT);
 
-            final List<String> bsscGitRepos = parseRepositoryNames(readRepositoriesFromGit());
-            Map<String, String> latestTaggedCatalogues = getLibrariesFromLatestTagVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
+            final List<String> bsscGitRepos = parseRepositoryNames(bitBucketClient.readRepositoriesFromGit());
+            Map<String, String> latestTaggedCatalogues = bitBucketClient.getLibrariesFromLatestTagVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
             Map<String, String> latestCatalogues = getLibrariesFromVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
             Map<String, String> repo = getVersionsFromGitRepo(REPO_BRANCH, bsscGitRepos);
             List<EnvironmentDeployment> environmentsDeployments = new ArrayList<>();
@@ -150,123 +151,12 @@ public class CompareDeployments {
         }
     }
 
-
-
     private JSONObject readDeploymentsFromK8s(Environment environment) throws Exception {
         return requestK8sApi(environment, "/api/v1/deployment/" + environment.k8sNamespace + "?itemsPerPage=60&page=1&sortBy=d,name");
     }
 
-    private static JSONObject requestApiWithCookie(String url, HttpClientContext context) throws IOException, JSONException {
-        final HttpClientContext contextWithGitSessionCookie = createContextWithGitSessionCookie("64E3659EF3338633DC0C772493CBE889");
-        LOG.debug("Request GET {}", url);
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            try (CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(url), context)) {
-                String response = EntityUtils.toString(httpResponse.getEntity());
-                LOG.trace("Response: {}", response);
-                JSONObject jsonResponse = new JSONObject(response);
-                return jsonResponse;
-            }
-        }
-    }
-
-    private static HttpClientContext createContextWithGitSessionCookie(String value) {
-        BasicCookieStore cookieStore = new BasicCookieStore();
-        BasicClientCookie cookie = new BasicClientCookie(GIT_SESSION_ID, value);
-        cookie.setDomain("git.kb.cz");
-        cookie.setAttribute(ClientCookie.DOMAIN_ATTR, "true");
-        cookie.setPath("/");
-        cookieStore.addCookie(cookie);
-        HttpClientContext context = HttpClientContext.create();
-        context.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
-        return context;
-    }
-
     private JSONObject requestK8sApi(Environment environment, String apiPath) throws Exception {
-        checkSslConnection(environment.k8sHost, environment.k8sApiPort);
         return k8sClient.requestK8sApi(environment, apiPath);
-    }
-
-    private static void checkSslConnection(String host, int port) throws Exception {
-        LOG.debug("Checking connection {}:{}", host, port);
-        HttpUriRequest httpRequest = new HttpGet("https://" + host + ":" + port);
-        httpRequest.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0");
-        try {
-            CloseableHttpResponse httpResponse = HttpClientBuilder.create().build().execute(httpRequest);
-            assert httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-        } catch (SSLHandshakeException ex) {
-            if (ex.getMessage().startsWith("PKIX path building failed")) {
-                InstallCert.addServerCertificateToTrusted(host, port, null);
-                setSystemSslProperties();
-            }
-            else throw ex;
-        } catch (Exception e) {
-            LOG.error("Unable to check connection {}:{} with error {}", host, port, e.getMessage());
-        }
-    }
-
-    private static String getCookie(String cookieName) {
-        if (httpClientContext == null ) {
-            httpClientContext = HttpClientContext.create();
-            httpClientContext.setAttribute(HttpClientContext.COOKIE_STORE, new BasicCookieStore());
-        }
-        CookieStore cookieStore = httpClientContext.getCookieStore();
-        String cookieValue = cookieStore.getCookies()
-                .stream()
-                .peek(c -> LOG.debug("cookie name:{}", c.getName()))
-                .filter(c -> cookieName.equals(c.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
-        return cookieValue;
-    }
-
-    private static boolean isGitLoggedIn() {
-        return !isBlank(getCookie(GIT_SESSION_ID));
-    }
-
-
-    private HttpClientContext gitLogin() {
-        if (isGitLoggedIn()) {
-            return httpClientContext;
-        }
-        String url = "https://git.kb.cz/j_atl_security_check";
-        HttpPost httpLoginRequest = new HttpPost(url);
-        List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("j_username", configuration.getUsername()));
-        params.add(new BasicNameValuePair("j_password", configuration.getPwd()));
-        try {
-            httpLoginRequest.setEntity(new UrlEncodedFormEntity(params));
-            LOG.info("Request POST {}", url);
-            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                try (CloseableHttpResponse httpResponse = httpClient.execute(httpLoginRequest, httpClientContext)) {
-                    LOG.trace(httpResponse.toString());
-                    LOG.info("Git session cookie {} is {}", GIT_SESSION_ID, getCookie(GIT_SESSION_ID));
-                    return httpClientContext;
-                }
-            }
-        } catch (IOException ioException) {
-            throw new UncheckedIOException(ioException);
-        }
-    }
-
-
-
-    private JSONObject readRepositoriesFromGit() throws Exception {
-        String url = "https://git.kb.cz/rest/api/latest/projects/BSSC/repos?start=0&limit=100";
-        checkSslConnection("git.kb.cz", 443);
-        return requestApiWithCookie(url, gitLogin());
-    }
-
-    private List<String> readFileLinesFromGit(String repoName, String fileName, String tagName) throws Exception {
-        String url = "https://git.kb.cz/rest/api/latest/projects/BSSC/repos/" +  repoName + "/browse/" + fileName + "?at=refs%2Ftags%2F" + tagName + "&start=0&limit=20000";
-        checkSslConnection("git.kb.cz", 443);
-        final JSONObject file = requestApiWithCookie(url, gitLogin());
-        final JSONArray linesArray = file.getJSONArray("lines");
-        List<String> lines = new ArrayList<>();
-        for (int i = 0; i < linesArray.length(); i++) {
-            lines.add(linesArray.getJSONObject(i).get("text").toString());
-        }
-        return lines;
     }
 
     private void lunchVersionCatalogRelease() {
@@ -340,51 +230,6 @@ public class CompareDeployments {
         return json;
     }
 
-    private Map<String, String> getLibrariesFromLatestTagVersionCatalogue(String catalogVersionBranch, List<String> bsscRepos) throws Exception {
-        final Map<String, String> tagMap = new HashMap<>();
-        final HttpClientContext httpClientContext = gitLogin();
-        List<String> result = new ArrayList<>();
-        for (String repoName : bsscRepos) {
-            if(repoName.startsWith(GitClient.VERSION_CATALOG_PREFIX) && !configuration.getIgnoredArtefacts().contains(repoName)) {
-                String latestTag = findLatestTag(repoName, catalogVersionBranch, httpClientContext);
-                if (latestTag == null) {
-                    continue;
-                }
-                tagMap.put(repoName, latestTag);
-                final List<String> fileLines = readFileLinesFromGit(repoName, "deployment.descriptor", latestTag);
-                fileLines.stream().map(line -> line.substring(line.indexOf(":")+1).replace(" ", "")).collect(Collectors.toCollection(() -> result));
-            }
-        }
-        Collections.sort(result);
-        final Map<String, String> tagVersions = listToMap(result);
-        tagVersions.putAll(tagMap);
-        return tagVersions;
-    }
-
-    private static String findLatestTag(final String catalogue, final String catalogVersionBranch, final  HttpClientContext context) throws IOException, JSONException {
-        String url = "https://git.kb.cz/rest/api/latest/projects/BSSC/repos/" + catalogue + "/tags?start=0&limit=100&filterText=&boostMatches=true";
-        LOG.info("Request GET {}", url);
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            try (CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(url), context)) {
-                assert httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-                String response = EntityUtils.toString(httpResponse.getEntity());
-                LOG.trace("Response: {}", response);
-                JSONObject jsonResponse = new JSONObject(response);
-                final JSONArray values = jsonResponse.getJSONArray("values");
-                final List<String> tags = new ArrayList<>();
-                for (int i = 0; i < values.length(); i++) {
-                    tags.add(((JSONObject) values.get(i)).getString("displayId"));
-                }
-                int latest =  tags.stream().filter(t -> t.startsWith("v" + catalogVersionBranch)).map(e -> Integer.valueOf(e.replace("v" + catalogVersionBranch + ".", ""))).sorted().reduce((first, second) -> second).orElse(-1);
-                if(latest == -1) {
-                    LOG.warn("Latest version not found for {}", catalogue);
-                    return null;
-                }
-                return "v" + catalogVersionBranch + "." + latest;
-            }
-        }
-    }
-
     private Map<String, String> getLibrariesFromVersionCatalogue(String catalogVersion, List<String> bsscRepos) throws IOException {
         new GitClient().fetchAllVersionCataloguesFromGit(catalogVersion, bsscRepos);
         final List<String> catalogues = findFilesInSubDir(VERSION_CATALOGUES_DIR, "deployment.descriptor");
@@ -431,24 +276,10 @@ public class CompareDeployments {
         return catalogues;
     }
 
-    private static void setSystemSslProperties() {
-        System.setProperty("javax.net.ssl.trustStore", InstallCert.LOCAL_CA_CERT_STORE);
-        System.setProperty("javax.net.ssl.trustStorePassword", InstallCert.STORAGE_PSSWD);
-    }
+
 
     class GitClient{
         public static final String VERSION_CATALOG_PREFIX = "version-catalog-K8S_";
-
-        public void main(String[] args) {
-            try {
-                final List<String> bsscRepos = parseRepositoryNames(readRepositoriesFromGit());
-                // final List<String> bsscRepos = Arrays.asList("be-task");
-                fetchAllServicesFromGit("develop", bsscRepos);
-                // fetchAllVersionCataloguesFromGit("1.8", bsscRepos);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
         public void fetchAllVersionCataloguesFromGit(String catalogueVersion, List<String> bsscRepos) {
             bsscRepos.stream().filter(r -> r.startsWith(VERSION_CATALOG_PREFIX))
