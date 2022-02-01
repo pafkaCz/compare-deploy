@@ -32,7 +32,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,11 +106,23 @@ public class HttpClient {
     }
 
 
+    public void removeExpiredCookie() {
+        CookieStore cookieStore = httpClientContext.getCookieStore();
+        cookieStore.clearExpired(new Date());
+    }
+
+    public void clearCookies() {
+        CookieStore cookieStore = httpClientContext.getCookieStore();
+        cookieStore.clear();
+    }
+
     public void setCookie(String name, String value, String domain) {
         CookieStore cookieStore = httpClientContext.getCookieStore();
         final BasicClientCookie cookie = new BasicClientCookie(name, value);
         cookie.setDomain(domain);
         cookie.setPath("/");
+        Date expireDate = Date.from(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant());
+        cookie.setExpiryDate(expireDate);
         cookieStore.addCookie(cookie);
     }
 
@@ -180,6 +195,7 @@ public class HttpClient {
 
     private void checkStatusCode(final CloseableHttpResponse httpResponse) throws AuthenticationException {
         String errMsg = "Status code: " + httpResponse.getStatusLine().getStatusCode() + ". " + httpResponse.getStatusLine().getReasonPhrase();
+//        throw new AuthenticationException(errMsg);
         switch (httpResponse.getStatusLine().getStatusCode()) {
             case HttpStatus.SC_OK :
                 return;

@@ -35,7 +35,8 @@ public class K8sClient {
         String k8sLoginCookie = getK8sLoginCookie(environment);
 
         if (StringUtils.isEmpty(k8sLoginCookie)) {
-            k8sLoginCookie = k8sLogin(environment);
+            RetryCommand<Environment, String> retryK8sLoginCmd = new RetryCommand<>((env) -> this.k8sLogin(env));
+            k8sLoginCookie = retryK8sLoginCmd.execute(environment);
         } else {
             k8sLoginCookie = URLDecoder.decode(k8sLoginCookie, StandardCharsets.UTF_8.toString());
         }
@@ -44,7 +45,7 @@ public class K8sClient {
         try {
             return httpClient.getJsonRequest(k8sUrlApi, Map.of(K8S_LOGIN_COOKIE_NAME, k8sLoginCookie));
         } catch (AuthenticationException authenticationException) {
-            k8sLogin(environment);
+            httpClient.removeExpiredCookie();
             return requestK8sApi(environment, apiPath);
         } catch (Exception e) {
             LOG.error("Error requesting {} : {}", k8sUrlApi, e.getMessage());
