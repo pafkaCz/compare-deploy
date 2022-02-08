@@ -16,12 +16,8 @@ def runGitCommand(cmd, directory):
 
 print("Starting updating SC services.")
 
-k8sBeServices = ["be-organization", "be-process", "be-task", "be-user"]
-k8sBlServices = ["bl-case-event"]
-k8sFeapiServices = ["feapi-case-simple", "feapi-case-storage"]
-
 basePath = "C:/Users/e_pzeman/Projects/BSSC"
-gitPatchName = "git.patch"
+gitPatchName = "git2.patch"
 filename = basePath + "/" + gitPatchName
 contents = codecs.open(filename, encoding='utf-8').read()
 
@@ -79,15 +75,16 @@ k8sServices = [
     "int-user",
     "int-user-setting",
 
-    "new-simple-case"
+    "new-simple-case",
 
-    "pf-config"
-    "pf-messaging-config"
+    "pf-config",
+    "pf-messaging-config",
     "pf-permissions"
 ]
 servicesInError = []
 oldBranchName = "feature/BSCM-5578-merge_dev_to_master"
-newBranchName = "feature/BSCM-5578-merge_dev_to_master"
+newBranchName = "feature/BSCM-5578-fix_manifest"
+commitMessage = "BSCM-5578 - Migrace na Kubernet 1.18"
 for project in k8sServices:
     print("Processing %s" % project)
     projectDirectory = basePath + "/" + project + "/"
@@ -107,37 +104,36 @@ for project in k8sServices:
         """
 
         # // DELETE local branch + update
+        """""
         runGitCommand("git checkout develop", projectDirectory)
         runGitCommand("git pull", projectDirectory)
         runGitCommand("git branch -d " + oldBranchName, projectDirectory)
         runGitCommand("git checkout -B master origin/master", projectDirectory)
         runGitCommand("git pull", projectDirectory)
-
+        """
 
         # APPLY PATCH
-        # runGitCommand("git checkout master", projectDirectory)
-        # runGitCommand("git pull", projectDirectory)
-        # runGitCommand("git branch -d " + newBranchName, projectDirectory)
-        # runGitCommand("git branch -d develop", projectDirectory)
+        """""
+        runGitCommand("git checkout develop", projectDirectory)
+        runGitCommand("git pull", projectDirectory)
+        runGitCommand("git checkout -B " + newBranchName, projectDirectory)
+        projectPatchFile = open(projectPatchFilename, "w")
+        projectPatchFile.write(contents.replace("${projectName}", project))
+        projectPatchFile.close()
 
-        # projectPatchFile = open(projectPatchFilename, "w")
-        # projectPatchFile.write(contents.replace("${projectName}", project))
-        # projectPatchFile.close()
-
-        # runGitCommand("git apply " + projectPatchFilename, projectDirectory)
-        # runGitCommand("git add ./deployment", projectDirectory)
-        # runGitCommand("git commit -m \"PSLAS-998 - SC logging in new logstash\"", projectDirectory)
-        # runGitCommand("git push origin feature/PSLAS-998_logging_SC_logstash", projectDirectory)
-
+        runGitCommand("git apply " + projectPatchFilename, projectDirectory)
+        runGitCommand("git add ./deployment", projectDirectory)
+        runGitCommand("git commit -m \"" + commitMessage + "\"", projectDirectory)
+        runGitCommand("git push origin " + newBranchName, projectDirectory)
+        os.remove(projectPatchFilename)
+        runGitCommand("git checkout develop", projectDirectory)
+        runGitCommand("git branch -d " + newBranchName, projectDirectory)
+        """
 
     except:
         servicesInError.append(project)
     finally:
-        print("END")
-        # os.remove(projectPatchFilename)
-        # runGitCommand("git checkout develop", projectDirectory)
-        # runGitCommand("git branch -d feature/PSLAS-998_logging_SC_logstash", projectDirectory)
-
+        print("END processing %s" % project)
 
 if not servicesInError:
     print("SUCCESS!")
