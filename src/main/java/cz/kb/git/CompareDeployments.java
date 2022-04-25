@@ -1,34 +1,14 @@
 package cz.kb.git;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.cookie.ClientCookie;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,7 +27,6 @@ import java.util.stream.Stream;
 
 import static cz.kb.git.Environment.*;
 import static java.util.Arrays.asList;
-import static org.apache.http.util.TextUtils.isBlank;
 import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
 
@@ -75,7 +54,7 @@ public class CompareDeployments {
     public void compare() {
         try {
             LOG.debug("Compare deployments started @" + ZonedDateTime.now());
-            List<Environment> environmentsToCompare = asList(FAT, UAT);
+            List<Environment> environmentsToCompare = asList(FAT, SIT);
 
             final List<String> bsscGitRepos = parseRepositoryNames(bitBucketClient.readRepositoriesFromGit());
             Map<String, String> latestTaggedCatalogues = bitBucketClient.getLibrariesFromLatestTagVersionCatalogue(CATALOGUE_VERSION_BRANCH, bsscGitRepos);
@@ -191,8 +170,8 @@ public class CompareDeployments {
         final JSONArray deployments = json.getJSONArray("deployments");
         for (int i = 0; i < deployments.length(); i++) {
             final JSONObject deployment = deployments.getJSONObject(i);
-            String image = deployment.getJSONArray("containerImages").getString(0).replace("nexus3.kb.cz:18443/", "");
-            image = image.substring(image.indexOf("/")+1);
+            String image = deployment.getJSONArray("containerImages").getString(0);
+            image = image.substring(image.lastIndexOf("/") + 1);
             k8Deploy.add(image);
         }
         Collections.sort(k8Deploy);

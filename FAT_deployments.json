@@ -1,0 +1,1967 @@
+{
+  "listMeta": {
+    "totalItems": 54
+  },
+  "cumulativeMetrics": [],
+  "status": {
+    "running": 53,
+    "pending": 0,
+    "failed": 1,
+    "succeeded": 0
+  },
+  "deployments": [
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-new-simple-case-new-simple-case",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "archetypeVersion": "11.0.7",
+          "buildNumber": "14",
+          "chart": "new-simple-case-0.9.0"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "10",
+          "polaris.fairwinds.com/security.runAsRootAllowed-exempt": "true"
+        },
+        "creationTimestamp": "2021-05-30T19:21:11Z",
+        "uid": "f76c3fc9-ae82-446d-ad66-7d2de5deda28"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/bssc/new-simple-case:0.9.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-user-setting-v1-int-user-setting-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "1",
+          "chart": "int-user-setting-v1-1.0.0",
+          "eamApplication": "UserSettings",
+          "eamApplicationComponent": "US.INT_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2021-05-05T12:07:49Z",
+        "uid": "c04c3172-f72e-4104-9a0c-e5cbf79b4178"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-user-setting:1.0.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-user",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "13",
+          "chart": "int-user-v1-1.19.0",
+          "eamApplication": "UserService",
+          "eamApplicationComponent": "UserService.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "13"
+        },
+        "creationTimestamp": "2020-06-08T13:24:04Z",
+        "uid": "8bf51223-3560-4a39-9422-6d558fe5c1fe"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-user:1.19.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-task",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "30",
+          "chart": "int-task-queue-v1-1.35.0",
+          "eamApplication": "UnifiedTaskQueue",
+          "eamApplicationComponent": "UTQ.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "20"
+        },
+        "creationTimestamp": "2020-07-03T08:27:05Z",
+        "uid": "dc0c2b54-1f55-42b6-9a9a-ead34d7b8dcf"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-task-queue:1.35.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-simple-case-v1-int-simple-case-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "135",
+          "chart": "int-simple-case-v1-1.144.0",
+          "eamApplication": "SimpleCase",
+          "eamApplicationComponent": "SC.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "36"
+        },
+        "creationTimestamp": "2021-02-18T16:08:24Z",
+        "uid": "c4bc4980-db90-46f0-85fd-661e854df8bd"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-simple-case:1.144.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-sc-permission-v1-int-sc-permission-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "20",
+          "chart": "int-sc-permission-v1-1.18.0",
+          "eamApplication": "SimpleCase",
+          "eamApplicationComponent": "SC.PERMISSION_JAVACOMP",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "5"
+        },
+        "creationTimestamp": "2021-06-17T07:04:28Z",
+        "uid": "706c4cb8-f39f-4ecc-a710-5c991017e81f"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/scpermissionservice/int-sc-permission:1.18.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-prin",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "16",
+          "chart": "int-print-queue-management-v1-1.31.0",
+          "eamApplication": "PrintQueue",
+          "eamApplicationComponent": "PQ.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "16"
+        },
+        "creationTimestamp": "2020-06-08T11:47:28Z",
+        "uid": "ad5a83d9-3f2e-4b16-939b-9eaa26bd168b"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-print-queue-management:1.31.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-document-caseevent-v1-int-document-caseeven",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "3",
+          "chart": "int-document-caseevent-v1-1.2.0",
+          "eamApplication": "HistoryAndComments",
+          "eamApplicationComponent": "HC.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "2"
+        },
+        "creationTimestamp": "2021-05-06T09:43:21Z",
+        "uid": "d3037380-288c-4ee3-b5ce-94d7ed489778"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-document-caseevent:1.2.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-casetouser-v1-int-casetouser-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "13",
+          "chart": "int-casetouser-v1-1.9.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "10"
+        },
+        "creationTimestamp": "2021-02-03T14:21:54Z",
+        "uid": "91ab8978-f34b-44c0-919d-4ae5e5e257f1"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-casetouser:1.9.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-casetoproduct-v1-int-casetoproduct-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "11",
+          "chart": "int-casetoproduct-v1-1.10.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "10"
+        },
+        "creationTimestamp": "2021-02-03T15:12:32Z",
+        "uid": "76843016-ca3f-4100-91ec-b98dc7f89365"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-casetoproduct:1.10.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-casetocustomer-v2-int-casetocustomer-v2",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v2",
+          "buildNumber": "11",
+          "chart": "int-casetocustomer-v2-1.10.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "11"
+        },
+        "creationTimestamp": "2021-02-19T09:32:21Z",
+        "uid": "cf8f8baa-934a-4721-9c40-d33352a7b46f"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-casetocustomer-v2:1.10.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-casetocustomer-v1-int-casetocustomer-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "9",
+          "chart": "int-casetocustomer-v1-1.6.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "3"
+        },
+        "creationTimestamp": "2021-03-04T14:31:36Z",
+        "uid": "79b4174b-f209-4319-bfe9-441873ed0572"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-casetocustomer:1.6.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-caseevent-mng-v2-int-caseevent-mng-v2",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v2",
+          "buildNumber": "11",
+          "chart": "int-caseevent-mng-v2-1.9.0",
+          "eamApplication": "HistoryAndComments",
+          "eamApplicationComponent": "HC.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "9"
+        },
+        "creationTimestamp": "2021-02-03T15:17:50Z",
+        "uid": "3c3c3467-3da6-4709-9f75-ad2603e8c6ca"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-caseevent-mng:1.9.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-casebusiness-audit-v1-int-casebusiness-audi",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "20",
+          "chart": "int-casebusiness-audit-v1-1.22.0",
+          "eamApplication": "BusinessAudit",
+          "eamApplicationComponent": "int-casebusiness-audit",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "16"
+        },
+        "creationTimestamp": "2021-02-03T14:06:47Z",
+        "uid": "d28c958a-16c6-4cb6-be9f-36dec5640478"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": [
+          {
+            "objectMeta": {
+              "creationTimestamp": null
+            },
+            "typeMeta": {},
+            "message": "Readiness probe failed: Get http://192.168.7.26:8088/health: dial tcp 192.168.7.26:8088: connect: connection refused",
+            "sourceComponent": "",
+            "sourceHost": "",
+            "object": "",
+            "count": 0,
+            "firstSeen": null,
+            "lastSeen": null,
+            "reason": "Unhealthy",
+            "type": "Warning"
+          }
+        ]
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-casebusiness-audit:1.22.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-case-v1-int-case-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "8",
+          "chart": "int-case-v1-1.7.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "7"
+        },
+        "creationTimestamp": "2021-02-03T14:59:54Z",
+        "uid": "d8c70f91-224c-42b4-a1d6-823158c05bfc"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-case:1.7.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-case",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "23",
+          "chart": "int-case-event-v1-1.27.0",
+          "eamApplication": "HistoryAndComments",
+          "eamApplicationComponent": "HC.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "9"
+        },
+        "creationTimestamp": "2020-11-19T08:54:39Z",
+        "uid": "e562e97a-2808-4d5b-b010-78f9c8b367e7"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-case-event:1.27.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-int-bpm",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "37",
+          "chart": "int-bpm-event-aggregator-v1-1.39.0",
+          "eamApplication": "BPMService",
+          "eamApplicationComponent": "UTQ.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "17"
+        },
+        "creationTimestamp": "2020-06-08T09:25:06Z",
+        "uid": "92bb2f9f-2852-4afe-b2bf-6c55c54efae0"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/int-bpm-event-aggregator:1.39.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-utq-saved-search-v1-feapi-utq-saved-searc",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "16",
+          "chart": "feapi-utq-saved-search-v1-1.26.0",
+          "eamApplication": "UnifiedTaskQueue",
+          "eamApplicationComponent": "feapi-utq-saved-search",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "16"
+        },
+        "creationTimestamp": "2020-06-08T13:17:07Z",
+        "uid": "db427fff-c881-41c8-a4e4-b28414132cc1"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/unifiedtaskqueue/feapi-utq-saved-search:1.26.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-user-setting-v1-feapi-user-setting-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "20",
+          "chart": "feapi-user-setting-v1-1.25.0",
+          "eamApplication": "UserSettings",
+          "eamApplicationComponent": "US.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "9"
+        },
+        "creationTimestamp": "2020-11-13T13:21:39Z",
+        "uid": "848a14a6-9124-433c-8963-1607b40e58bf"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-user-setting:1.25.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-uc",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "56",
+          "chart": "feapi-ucf-v1-1.89.0",
+          "eamApplication": "UnifiedClientFolder",
+          "eamApplicationComponent": "UCF.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "20"
+        },
+        "creationTimestamp": "2020-10-19T11:50:53Z",
+        "uid": "90f1a12f-0ee2-45f4-a46e-76a2fdc52769"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-ucf:1.89.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-task-v1-feapi-task-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "38",
+          "chart": "feapi-task-v1-1.48.0",
+          "eamApplication": "UnifiedTaskQueue",
+          "eamApplicationComponent": "UTQ.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "24"
+        },
+        "creationTimestamp": "2020-07-21T06:59:01Z",
+        "uid": "f61b1f08-3b5a-43df-853d-f75c85d1a45f"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-task:1.48.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-re",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "16",
+          "chart": "feapi-redirect-v1-1.21.0",
+          "eamApplication": "FrontendAccess",
+          "eamApplicationComponent": "FrontendAccess.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "14"
+        },
+        "creationTimestamp": "2020-06-08T12:50:14Z",
+        "uid": "2d1cbb76-1324-4e2a-9747-13726cd4186d"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-redirect:1.21.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-product-v1-feapi-product-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "11",
+          "chart": "feapi-product-v1-1.17.0",
+          "eamApplication": "ProductService",
+          "eamApplicationComponent": "ProductService.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "8"
+        },
+        "creationTimestamp": "2020-07-22T07:00:39Z",
+        "uid": "adcfa3d9-7c42-4111-b388-1475c5d92259"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-product:1.17.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-organization-v1-feapi-organization-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "22",
+          "chart": "feapi-organization-v1-1.29.0",
+          "eamApplication": "OrganizationService",
+          "eamApplicationComponent": "OrganizationService.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "10"
+        },
+        "creationTimestamp": "2020-07-22T12:15:22Z",
+        "uid": "94899a1d-741c-4232-bc0b-ab00f1e2a49d"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-organization:1.29.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-notification-v1-feapi-notification-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "13",
+          "chart": "feapi-notification-v1-1.18.0",
+          "eamApplication": "Notification",
+          "eamApplicationComponent": "NTF.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "11"
+        },
+        "creationTimestamp": "2020-07-22T07:12:55Z",
+        "uid": "c7bd1f6a-6a13-4b29-aae5-791088e1ce49"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-notification:1.18.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-identity-v1-feapi-identity-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "15",
+          "chart": "feapi-identity-v1-1.25.0",
+          "eamApplication": "UserService",
+          "eamApplicationComponent": "SC.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "11"
+        },
+        "creationTimestamp": "2020-07-22T07:32:56Z",
+        "uid": "36fc7143-f099-4939-b402-c81bbfd65576"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-identity:1.25.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-hi",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "16",
+          "chart": "feapi-history-and-comments-v1-1.23.0",
+          "eamApplication": "HistoryAndComments",
+          "eamApplicationComponent": "HC.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "14"
+        },
+        "creationTimestamp": "2020-06-08T10:27:14Z",
+        "uid": "c7157822-bcbe-4577-9186-db15f9bde81b"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-history-and-comments:1.23.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-customer-v1-feapi-customer-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "35",
+          "chart": "feapi-customer-v1-1.41.0",
+          "eamApplication": "PartyService",
+          "eamApplicationComponent": "SC.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "29"
+        },
+        "creationTimestamp": "2020-07-07T10:11:02Z",
+        "uid": "b9623e82-1432-4d09-a81a-ca0d9f1fc29c"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-customer:1.41.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-case-template-v1-feapi-case-template-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "12",
+          "chart": "feapi-case-template-v1-1.21.0",
+          "eamApplication": "CaseTemplate",
+          "eamApplicationComponent": "CT.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "11"
+        },
+        "creationTimestamp": "2020-06-08T10:08:22Z",
+        "uid": "ae5b2ae4-ddcf-4fda-a112-0bd519875b11"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-case-template:1.21.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-case-storage-v1-feapi-case-storage-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "11",
+          "chart": "feapi-case-storage-v1-1.21.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "11"
+        },
+        "creationTimestamp": "2020-06-08T09:35:43Z",
+        "uid": "ad531e30-251f-44ff-b5a6-1f1a3a56d5c9"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-case-storage:1.21.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-feapi-case-simple-v1-feapi-case-simple-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "34",
+          "chart": "feapi-case-simple-v1-1.52.0",
+          "eamApplication": "SimpleCase",
+          "eamApplicationComponent": "CS.FE_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "28"
+        },
+        "creationTimestamp": "2020-06-08T12:49:27Z",
+        "uid": "779cb011-0d4a-4c95-8787-e03617b89bf2"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/feapi-case-simple:1.52.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-utq-saved-search-v1-bl-utq-saved-search-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "41",
+          "chart": "bl-utq-saved-search-v1-1.62.0",
+          "eamApplication": "UnifiedTaskQueue",
+          "eamApplicationComponent": "bl-utq-saved-search",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "38"
+        },
+        "creationTimestamp": "2020-06-08T13:15:38Z",
+        "uid": "ee8b502f-30b5-41aa-a9b7-28fab6171c0b"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/unifiedtaskqueue/bl-utq-saved-search:1.62.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-user-setting-v1-bl-user-setting-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "19",
+          "chart": "bl-user-setting-v1-1.26.0",
+          "eamApplication": "UserSettings",
+          "eamApplicationComponent": "US.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "13"
+        },
+        "creationTimestamp": "2020-07-22T06:49:34Z",
+        "uid": "d30cc349-80f6-48fb-bc40-9c6f3bac6b00"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-user-setting:1.26.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-text",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "13",
+          "chart": "bl-text-formatting-v1-1.23.0",
+          "eamApplication": "HistoryAndComments",
+          "eamApplicationComponent": "UCF.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "12"
+        },
+        "creationTimestamp": "2020-06-08T10:25:36Z",
+        "uid": "529b2c57-9019-4d94-aef8-00871c1f9438"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-text-formatting:1.23.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-simpl",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "20",
+          "chart": "bl-simple-case-v1-1.39.0",
+          "eamApplication": "SimpleCase",
+          "eamApplicationComponent": "SC.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "16"
+        },
+        "creationTimestamp": "2020-06-08T12:48:39Z",
+        "uid": "5a7d2561-22ea-47f7-8994-cb32a7ce9a26"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-simple-case:1.39.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-repor",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "20",
+          "chart": "bl-reporting-storage-v1-1.24.0",
+          "eamApplication": "BPMReportingStorage",
+          "eamApplicationComponent": "UTQ.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "9"
+        },
+        "creationTimestamp": "2020-07-22T15:57:24Z",
+        "uid": "f06854cc-dcb9-44d9-a8ea-5d1d3f672bd3"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-reporting-storage:1.24.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-redir",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "36",
+          "chart": "bl-redirect-v1-1.50.0",
+          "eamApplication": "FrontendAccess",
+          "eamApplicationComponent": "FrontendAccess.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "26"
+        },
+        "creationTimestamp": "2020-06-08T12:47:15Z",
+        "uid": "d1610c0a-2c9e-42f1-b291-81233ef2c5eb"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-redirect:1.50.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-print",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "16",
+          "chart": "bl-print-queue-v1-1.32.0",
+          "eamApplication": "PrintQueue",
+          "eamApplicationComponent": "PQ.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "14"
+        },
+        "creationTimestamp": "2020-06-08T11:45:55Z",
+        "uid": "8296ae6a-1434-42d2-ae7c-59dbe2453788"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-print-queue:1.32.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-notif",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "14",
+          "chart": "bl-notification-dashboard-v1-1.25.0",
+          "eamApplication": "Notification",
+          "eamApplicationComponent": "NOTIF.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "14"
+        },
+        "creationTimestamp": "2020-06-09T12:44:44Z",
+        "uid": "1b53517a-8118-493a-b1eb-73b3cff1b73f"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-notification-dashboard:1.25.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-docum",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "10",
+          "chart": "bl-document-id-convertor-v1-1.20.0",
+          "eamApplication": "UnifiedClientFolder",
+          "eamApplicationComponent": "UCF.BL_SERVICES",
+          "platformCoreVersion": "3.2.2"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "10"
+        },
+        "creationTimestamp": "2020-06-08T13:06:27Z",
+        "uid": "982252bb-2548-4417-be12-b723defc31b8"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-document-id-convertor:1.20.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-case-template-v1-bl-case-template-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "41",
+          "chart": "bl-case-template-v1-1.62.0",
+          "eamApplication": "CaseTemplate",
+          "eamApplicationComponent": "CT.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "30"
+        },
+        "creationTimestamp": "2020-06-19T09:36:40Z",
+        "uid": "e7c1d08d-c5d0-47c4-9dae-0cafd49e5f2e"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-case-template:1.62.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-case-storage-v1-bl-case-storage-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "15",
+          "chart": "bl-case-storage-v1-1.35.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "9"
+        },
+        "creationTimestamp": "2020-07-22T06:47:11Z",
+        "uid": "d366f2a4-a295-4b01-805c-e06d11e44fa5"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-case-storage:1.35.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-case-storage-user-v1-bl-case-storage-user-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "13",
+          "chart": "bl-case-storage-user-v1-1.21.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "11"
+        },
+        "creationTimestamp": "2020-06-08T09:34:56Z",
+        "uid": "3eb15ff2-f46e-4824-b9f2-8c0ee4972b58"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-case-storage-user:1.21.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-case-storage-product-v1-bl-case-storage-prod",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "12",
+          "chart": "bl-case-storage-product-v1-1.23.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "12"
+        },
+        "creationTimestamp": "2020-06-08T09:34:09Z",
+        "uid": "451ff93e-a5be-4e14-9191-e4703cdc8105"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-case-storage-product:1.23.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-case-storage-customer-v1-bl-case-storage-cus",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "34",
+          "chart": "bl-case-storage-customer-v1-1.39.0",
+          "eamApplication": "CaseStorage",
+          "eamApplicationComponent": "CS.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "19"
+        },
+        "creationTimestamp": "2020-07-22T12:14:32Z",
+        "uid": "d3ac659a-6e1c-4a8f-bc15-119f39ccc441"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-case-storage-customer:1.39.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-bl-case-event-v1-bl-case-event-v1",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "21",
+          "chart": "bl-case-event-v1-1.33.0",
+          "eamApplication": "HistoryAndComments",
+          "eamApplicationComponent": "HC.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "17"
+        },
+        "creationTimestamp": "2020-06-08T10:26:24Z",
+        "uid": "9aece3b8-7aab-49a1-8af1-680ca5423856"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/bl-case-event:1.33.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-be-user",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "18",
+          "chart": "be-user-v1-1.26.0",
+          "eamApplication": "UserService",
+          "eamApplicationComponent": "SC.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "17"
+        },
+        "creationTimestamp": "2020-06-08T13:22:29Z",
+        "uid": "6400be90-ec16-4827-9ebf-138cca9db44e"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/be-user:1.26.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-be-task",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "76",
+          "chart": "be-task-v1-1.96.0",
+          "eamApplication": "UnifiedTaskQueue",
+          "eamApplicationComponent": "UTQ.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "26"
+        },
+        "creationTimestamp": "2020-12-10T13:34:05Z",
+        "uid": "4091d626-2ab3-4dc9-b2ab-016083b3cd4d"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/be-task:1.96.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-be-proce",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "24",
+          "chart": "be-process-v1-1.31.0",
+          "eamApplication": "BPMService",
+          "eamApplicationComponent": "UTQ.BL_SERVICES",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "21"
+        },
+        "creationTimestamp": "2020-06-08T09:24:13Z",
+        "uid": "3514dfcf-2e7e-4d57-9050-950e1719e228"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/be-process:1.31.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-be-permi",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "app.kubernetes.io/instance": "bssc-fat-01-app-be-permission-fat",
+          "buildNumber": "5",
+          "chart": "be-permission-1.11.3",
+          "eamApplication": "permissionresolver",
+          "eamApplicationComponent": "permissionresolver",
+          "platformCoreVersion": "3.1.0"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "2",
+          "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"extensions/v1beta1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"labels\":{\"apiVersion\":\"v1\",\"app.kubernetes.io/instance\":\"bssc-fat-01-app-be-permission-fat\",\"buildNumber\":\"5\",\"chart\":\"be-permission-1.11.3\",\"eamApplication\":\"permissionresolver\",\"eamApplicationComponent\":\"permissionresolver\",\"platformCoreVersion\":\"3.1.0\"},\"name\":\"bssc-fat-01-app-be-permi\",\"namespace\":\"bssc-fat-01-app\"},\"spec\":{\"replicas\":3,\"revisionHistoryLimit\":1,\"selector\":{\"matchLabels\":{\"app\":\"bssc-fat-01-app-be-permi\"}},\"template\":{\"metadata\":{\"labels\":{\"apiVersion\":\"v1\",\"app\":\"bssc-fat-01-app-be-permi\",\"buildNumber\":\"5\",\"eamApplication\":\"permissionresolver\",\"eamApplicationComponent\":\"permissionresolver\",\"platformCoreVersion\":\"3.1.0\",\"visualize\":\"true\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"TRUST_STORE_PATH\",\"valueFrom\":{\"configMapKeyRef\":{\"key\":\"pf.ssl.truststore.path\",\"name\":\"pf-config\"}}},{\"name\":\"TRUST_STORE_PASSWORD\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"pf.ssl.truststore.password\",\"name\":\"pf-config-secret\"}}},{\"name\":\"KAFKA_HOST\",\"valueFrom\":{\"configMapKeyRef\":{\"key\":\"monitoring.kafka.host\",\"name\":\"pf-config\"}}},{\"name\":\"KAFKA_PORT\",\"valueFrom\":{\"configMapKeyRef\":{\"key\":\"monitoring.kafka.port\",\"name\":\"pf-config\"}}},{\"name\":\"KAFKA_TOPIC\",\"valueFrom\":{\"configMapKeyRef\":{\"key\":\"monitoring.kafka.topic\",\"name\":\"pf-config\"}}},{\"name\":\"POD_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.name\"}}},{\"name\":\"NAMESPACE\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.namespace\"}}},{\"name\":\"JAVA_OPTS\",\"valueFrom\":{\"configMapKeyRef\":{\"key\":\"java.opts\",\"name\":\"be-permission\"}}}],\"image\":\"nexus3.kb.cz:18443/pf/be-permission:1.11.3\",\"imagePullPolicy\":\"Always\",\"livenessProbe\":{\"failureThreshold\":5,\"httpGet\":{\"path\":\"/health\",\"port\":8088},\"initialDelaySeconds\":30,\"periodSeconds\":30,\"successThreshold\":1,\"timeoutSeconds\":20},\"name\":\"be-permission\",\"ports\":[{\"containerPort\":8080}],\"readinessProbe\":{\"failureThreshold\":5,\"httpGet\":{\"path\":\"/health\",\"port\":8088},\"initialDelaySeconds\":30,\"periodSeconds\":30,\"successThreshold\":1,\"timeoutSeconds\":20},\"resources\":null,\"volumeMounts\":[{\"mountPath\":\"/pf/config/\",\"name\":\"logback-xml\"},{\"mountPath\":\"/pf/spring/\",\"name\":\"application-properties\"},{\"mountPath\":\"/pf/shared/\",\"name\":\"shared-properties\"},{\"mountPath\":\"/pf/security/\",\"name\":\"security-properties\",\"readOnly\":true}]}],\"imagePullSecrets\":[{\"name\":\"nexus3\"}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"logback.xml\",\"path\":\"logback.xml\"}],\"name\":\"be-permission\"},\"name\":\"logback-xml\"},{\"configMap\":{\"items\":[{\"key\":\"application.properties\",\"path\":\"application.properties\"}],\"name\":\"be-permission\"},\"name\":\"application-properties\"},{\"configMap\":{\"items\":[{\"key\":\"application.properties\",\"path\":\"shared.properties\"}],\"name\":\"pf-config\"},\"name\":\"shared-properties\"},{\"name\":\"security-properties\",\"secret\":{\"items\":[{\"key\":\"truststore.jks\",\"path\":\"truststore.jks\"},{\"key\":\"security.properties\",\"path\":\"security.properties\"},{\"key\":\"xx_sso_case_fat.keytab\",\"path\":\"xx_sso_case_fat.keytab\"},{\"key\":\"krb5.conf\",\"path\":\"krb5.conf\"}],\"secretName\":\"pf-config-secret\"}}]}}}}\n"
+        },
+        "creationTimestamp": "2020-07-03T11:19:14Z",
+        "uid": "3ffd37b3-767c-43d7-971e-d2e3c32a2ef9"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 3,
+        "desired": 3,
+        "running": 3,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/be-permission:1.11.3"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-be-organ",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "14",
+          "chart": "be-organization-v1-1.26.0",
+          "eamApplication": "OrganizationService",
+          "eamApplicationComponent": "OrganizationService.INT_SERVICES.CAMEL",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "12"
+        },
+        "creationTimestamp": "2020-06-08T11:16:59Z",
+        "uid": "d51edfb6-5502-4b8e-843f-b09b40fed7f6"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/be-organization:1.26.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-be-artemis-dispatcher-v1-be-artemis-dispatcher",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "apiVersion": "v1",
+          "buildNumber": "22",
+          "chart": "be-artemis-dispatcher-v1-1.20.0",
+          "eamApplication": "HistoryAndComments",
+          "eamApplicationComponent": "be-artemis-dispatcher",
+          "platformCoreVersion": "3.2.9"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "21"
+        },
+        "creationTimestamp": "2021-02-09T10:56:50Z",
+        "uid": "dbf22be1-a61c-4a9a-9f61-ee7b748d7ac6"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/util/be-artemis-dispatcher:1.20.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-app-simple-case-admin-app-simple-case-admin",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "buildNumber": "6",
+          "chart": "app-simple-case-admin-1.24.0"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2020-06-25T11:52:56Z",
+        "uid": "87698f26-ba8c-4845-959a-96cd27d2fd0b"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/pf/app-simple-case-admin:1.24.0"
+      ],
+      "initContainerImages": null
+    },
+    {
+      "objectMeta": {
+        "name": "bssc-fat-01-app-app-simp",
+        "namespace": "bssc-fat-01-app",
+        "labels": {
+          "buildNumber": "345",
+          "chart": "app-simple-case-0.484.0"
+        },
+        "annotations": {
+          "deployment.kubernetes.io/revision": "150"
+        },
+        "creationTimestamp": "2020-10-23T15:26:18Z",
+        "uid": "75dcb590-751d-4f2e-bc30-32b53bc1c988"
+      },
+      "typeMeta": {
+        "kind": "deployment",
+        "scalable": true
+      },
+      "pods": {
+        "current": 1,
+        "desired": 1,
+        "running": 1,
+        "pending": 0,
+        "failed": 0,
+        "succeeded": 0,
+        "warnings": []
+      },
+      "containerImages": [
+        "nexus3.kb.cz:18443/bssc/app-simple-case:0.484.0"
+      ],
+      "initContainerImages": null
+    }
+  ],
+  "errors": []
+}
