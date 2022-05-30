@@ -31,7 +31,7 @@ public class BitBucketClient {
         if (!isGitLoggedIn()) {
             gitLogin();
         }
-        Url url = GIT_URL.withPath("/rest/api/latest/projects/BSSC/repos?start=0&limit=100");
+        Url url = GIT_URL.withPath("/rest/api/latest/projects/BSSC/repos?start=0&limit=200");
         return httpClient.getJsonRequest(url, null);
     }
 

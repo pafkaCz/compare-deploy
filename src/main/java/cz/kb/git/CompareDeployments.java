@@ -261,7 +261,7 @@ public class CompareDeployments {
         public static final String VERSION_CATALOG_PREFIX = "version-catalog-K8S_";
 
         public void fetchAllVersionCataloguesFromGit(String catalogueVersion, List<String> bsscRepos) {
-            bsscRepos.stream().filter(r -> r.startsWith(VERSION_CATALOG_PREFIX))
+            bsscRepos.stream().filter(repoName -> repoName.startsWith(VERSION_CATALOG_PREFIX) && !configuration.getIgnoredArtefacts().contains(repoName))
              .forEach(catalogueName -> {
                  try {
                      fetchRepoFromGit(catalogueName, "release/" + catalogueVersion, VERSION_CATALOGUES_DIR);
@@ -344,7 +344,7 @@ public class CompareDeployments {
 
         private void waitForProcess(Process process) throws InterruptedException {
             // process.waitFor(); // does not work
-            Thread.sleep(1000); // just wait for a while to finish
+            Thread.sleep(1500); // just wait for a while to finish
         }
     }
 }
